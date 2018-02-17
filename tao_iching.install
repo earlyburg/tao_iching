@@ -1,0 +1,99 @@
+<?php
+
+/**
+ * Implentation of the hook_install().
+ */
+function tao_iching_install() {
+
+// install our database from a .sql dump
+   $sql = file_get_contents(drupal_get_path('module', 'tao_iching') . '/includes/hexagrams.sql');
+   $statements = preg_split('/[\n\r]+/', $sql);
+   $templine = '';
+    foreach ($statements as $line) {
+
+// Add this line to the current segment
+   $templine .= $line;
+
+// If it has a semicolon at the end, it's the end of the query
+     if (substr(trim($line), -1, 1) == ';') {
+      db_query($templine);
+	$templine = '';
+   }
+  }  
+} // END tao_iching_install()
+
+/**
+* Implentation of the hook_uninstall().
+*/
+function tao_iching_uninstall() {
+
+}
+
+function tao_iching_schema() {
+
+  $schema['hexagrams'] = array(
+    'description' => 'The 64 hexagrams as binary objects.',
+    'fields' => array(
+      'book_number' => array(
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+        'description' => 'Book Number',
+      ),
+      'line1' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line1',
+      ),
+      'line2' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line2',
+      ),
+      'line3' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line3',
+      ),
+      'line4' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line4',
+      ),
+      'line5' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line5',
+      ),
+      'line6' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'line6',
+      ),
+   ),
+   'unique_keys' => array(
+      'book_number' => array(
+        'book_number',
+        'line1',
+        'line2',
+        'line3',
+        'line4',
+        'line5',
+        'line6',
+      ),
+    ), 
+  );
+  return $schema;
+}
+
+
+
+
+
+

@@ -1,0 +1,379 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function tao_iching_menu() {
+
+  $items = array();
+
+  $items['i-ching'] = array(
+    'title' => 'I-Ching, the Book of Changes',
+    'description' => 'Cast your I-Ching, and read an interpretation.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('tao_iching_form'),
+    'access callback' => TRUE,
+  );
+
+  $items['result'] = array(
+    'title' => 'I-Ching, the Book of Changes',
+    'description' => 'Cast your I-Ching, and read an interpretation.',
+    'page callback' => 'tao_iching_view',
+    'access arguments' => array('access content')
+  );
+
+  return $items;
+
+} // end tao_iching_menu()
+
+
+
+/**
+ * Implements hook_theme_registry_alter().
+ */
+function tao_iching_theme_registry_alter(&$theme_registry) {
+// Defined path to the current module.
+  $module_path = drupal_get_path('module', 'tao_iching');
+// Find all .tpl.php files in this module's folder recursively.
+  $template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path);
+// Iterate through all found template file objects.
+  foreach ($template_file_objects as $key => $template_file_object) {
+// If the template has not already been overridden by a theme.
+    if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+// Alter the theme path and template elements.
+      $theme_registry[$key]['theme path'] = $module_path;
+      $theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+      $theme_registry[$key]['type'] = 'module';
+    }
+  }
+}
+
+// custom css for the basic layout
+   drupal_add_css(drupal_get_path('module', 'tao_iching') . '/css/tao_iching.css', array('group' => CSS_DEFAULT, 'every_page' => FALSE));
+
+// javascript for the result page
+   drupal_add_js(drupal_get_path('module', 'tao_iching') . '/js/tao_iching.js');
+
+
+// make the form
+function tao_iching_form($form, &$form_state) {
+
+  $form['question'] = array(
+   '#type' => 'textarea',
+   '#title' => 'Ask A Question.',
+   '#cols' => 35,
+   '#resizable' => TRUE,
+   '#rows' => 2,
+   );
+  $form['submit_button'] = array(
+    '#type' => 'submit',
+    '#attributes' => array(
+    'class' => array(
+      'custom_mod_submit'
+     ),
+   ),
+    '#value' => t('Toss The Coins'),
+  );
+
+  return $form;
+
+} // end of tao_iching_form()
+
+
+
+/**
+ * Implements hook_form_alter().
+ */
+function tao_iching_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == 'tao_iching_form') {
+    $form['#theme'] = array('tao_iching_form');
+  }
+}
+
+
+/** a form template for the i-ching page */
+function tao_iching_theme($existing, $type, $theme, $path) {
+
+    $items['tao_iching_form'] = array(
+        'render element' => 'form',
+        'template' => 'tao-iching-form',
+        'path' => '/templates',
+    );
+
+    return $items;
+}
+
+// display the correct title
+function tao_iching_preprocess_page(&$vars){
+
+$currentpath = current_path();
+ if (($currentpath == "i-ching") || ($currentpath == "result")) {
+   drupal_set_title('I-Ching, the Book of Changes');
+ }
+}
+
+// coin-flipping logic and session handling
+function tao_iching_form_validate($form, &$form_state) {
+
+  global $hexagram;
+
+// define the 8 trigrams as arrays
+   $kun = array(0, 0, 0); 
+   $gen = array(1, 0, 0); 
+   $kan = array(0, 1, 0); 
+   $xun = array(1, 1, 0); 
+   $zhen = array(0, 0, 1); 
+   $li = array(1, 0, 1); 
+   $dui = array(0, 1, 1); 
+   $qian = array(1, 1, 1); 
+
+   $toss = array();
+
+// grab the question
+   if ($form_state['values']['question']) {
+	$_SESSION['question'] = $form_state['values']['question'];
+   }
+ 
+  if (isset($_POST['op'])) {
+
+// toss three coins, get the result (heads = 1, tails = 0)
+    for ($k = 0 ; $k < 3; $k++) {
+      $toss[] = rand(0, 1);
+    }
+
+// logic for the coin toss
+
+  if ($toss === $qian) {
+	$val = 9;
+	$line = "yang_changing";
+  }
+
+  if ($toss === $kun) {
+	$val = 6;
+	$line = "yin_changing";
+  }
+
+$sumtest = array_sum($toss);
+
+  if ($sumtest == 2) {
+	$val = 8;
+	$line = "yin"; 
+  }
+
+  if ($sumtest == 1) {
+	$val = 7;
+	$line = "yang";
+  }
+
+// create a hexagram in $_SESSION
+
+   $_SESSION['hexagram'][] = $line;
+   $_SESSION['coinsval'] = $val;
+   $arraysize = count($_SESSION['hexagram']);
+
+   $val = NULL;
+
+// once we have tossed the coins 6 times...
+    if ($arraysize == 6) {
+
+// check for changing lines
+     $_SESSION['changed'] = $_SESSION['hexagram'];
+
+      foreach($_SESSION['changed'] as $key => $value) {
+  
+	if ($value == "yang_changing") {
+	  $_SESSION['changed'][$key] = "yin";
+	} else if ($value == "yin_changing") {
+	  $_SESSION['changed'][$key] = "yang";
+	}
+
+      } // end foreach()
+
+	if ($_SESSION['changed'] === $_SESSION['hexagram']) {
+	  $_SESSION['changed'] = NULL;
+	  $_SESSION['changed'] = "No Change";
+	}
+
+  
+	$hexagram = $_SESSION['hexagram'];
+	$_SESSION['final_hexagram'] = $_SESSION['hexagram'];
+	$_SESSION['final_changed'] = $_SESSION['changed'];
+
+// flip the final arrays to display correctly (bottom to top)
+	$_SESSION['final_hexagram'] = array_reverse($_SESSION['final_hexagram']);
+    	if ($_SESSION['final_changed'] != "No Change") {
+ 	  $_SESSION['final_changed'] = array_reverse($_SESSION['final_changed']);
+	}
+
+     $_SESSION['hexagram'] = NULL;
+     $_SESSION['changed'] = NULL;
+
+    } // end if()
+
+  } // end the submit function test
+
+} // end of tao_iching_form_validate()
+
+
+
+// submit redirects to the result page after more session sanitation
+function tao_iching_form_submit($form, &$form_state) {
+
+   global $hexagram;
+    if ($hexagram != NULL) {
+	$_SESSION['final_question'] = $_SESSION['question'];
+	$_SESSION['question'] = NULL;
+	$form_state['redirect'] = url('result');
+	}
+} // end of tao_iching_form_submit()
+
+
+
+// makes the page output for the result page
+function tao_iching_view() {
+
+// dont let the user land on this page first
+  $path = $GLOBALS['base_url'];
+
+   if (!array_key_exists('final_hexagram', $_SESSION)) {
+	header("Location:" . $path . "/i-ching");
+	die();
+   } 
+
+
+   $rendered_content = "<div class='sm_hexag'>";
+
+     foreach ($_SESSION['final_hexagram'] as $imgname) {
+
+     $rendered_content .=  "<div class='min_line'>";
+     $rendered_content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $imgname . "_min.png'>";
+     $rendered_content .=  "</div>";
+    }
+
+   $rendered_content .= "</div>";
+
+   $rendered_content .= "<div class='sm_hexag'>";
+
+     if ($_SESSION['final_changed'] == "No Change") {  
+
+      $rendered_content .=  "<div class='sm_iching_blurb'>";
+      $rendered_content .=  "No changing lines. The situation is expected to remain the same.";
+      $rendered_content .=  "</div>";
+     }
+
+     if (($_SESSION['final_changed'] != NULL) && ($_SESSION['final_changed'] != "No Change")) {
+
+      foreach ($_SESSION['final_changed'] as $chgname) {
+
+       $rendered_content .=  "<div class='min_line'>";
+       $rendered_content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname . "_min.png'>";
+       $rendered_content .=  "</div>";
+      }
+     } // end if
+
+   $rendered_content .= "</div>";
+
+  $rendered_content .= "<div class='iching_blurb'>";
+  $rendered_content .= "<a href='i-ching'><b>Click Here to start again.</b></a>";
+  $rendered_content .= "</div>";
+
+//    dpm($_SESSION, $name=NULL);
+
+ return $rendered_content;
+
+   $_SESSION['final_hexagram'] = NULL;
+   $_SESSION['final_changed'] = NULL;
+   $_SESSION['final_question'] = NULL;
+ }  // END tao_iching_view()
+
+
+
+
+// returns the book name from the database when passed a hexagram array
+function tao_iching_booklookup($hex) {
+
+ $bookname = db_query('SELECT book_number FROM {hexagrams} WHERE line1 = :line1 AND line2 = :line2 AND line3 = :line3 AND line4 = :line4 AND line5 = :line5 AND line6 = :line6', array(
+  ':line1' => $hex[0], 
+  ':line2' => $hex[1], 
+  ':line3' => $hex[2],
+  ':line4' => $hex[3],
+  ':line5' => $hex[4],
+  ':line6' => $hex[5],
+))->fetchField();
+
+return $bookname;
+
+} // END tao_iching_booklookup()
+
+
+
+
+// takes a 'raw' hexagram and returns the number of the top changing line
+
+function tao_iching_find_top_changing($rawhex) {
+
+   $yin_keys = array_keys($rawhex, "yin_changing");
+   $yang_keys = array_keys($rawhex, "yang_changing");
+
+   $integrated = array_merge($yin_keys, $yang_keys);
+   sort($integrated, SORT_NUMERIC);
+
+   $top_changed = $integrated[0];
+    switch ($top_changed) {
+     case "0":
+        $line_pos = "6";
+        break;
+     case "1":
+        $line_pos = "5";
+        break;
+     case "2":
+        $line_pos = "4";
+        break;
+     case "3":
+        $line_pos = "3";
+        break;
+     case "4":
+        $line_pos = "2";
+        break;
+     case "5":
+        $line_pos = "1";
+        break;
+  }
+
+   $topchanging = "line" . $line_pos;
+
+   return $topchanging;
+
+} // end function tao_iching_find_top_changing()
+
+
+
+
+// takes a 'raw' hexagram array and removes the "_changing" part of any value if present
+function tao_iching_rawhex_cleanup($raw) {
+
+  $yang_needle = "yang_changing";
+  $yang_replacement = "yang";
+  $yin_needle = "yin_changing";
+  $yin_replacement = "yin";
+
+   for($i=0;$i<count($raw);$i++) {
+
+     if($raw[$i] == $yang_needle) {
+      $raw[$i] = $yang_replacement;
+     }
+     if($raw[$i] == $yin_needle) {
+      $raw[$i] = $yin_replacement;
+     }
+
+  }
+   $cleaned = $raw;
+   return $cleaned;
+
+} // end tao_iching_rawhex_cleanup()
+
+
+
+
+
+
