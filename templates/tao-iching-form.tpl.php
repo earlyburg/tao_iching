@@ -16,8 +16,6 @@ drupal_session_start();
 
  print drupal_render_children($form);
 
-  print "<div class='iching_content'>";
-
     print "<div class='iching_blurb'>";
 	print "<br>";
     print "</div>"; // .iching_blurb
@@ -113,7 +111,6 @@ drupal_session_start();
   $output =_block_get_renderable_array(_block_render_blocks(array($socblock)));
   print render($output);
 
-print "</div>"; // iching_content
 
 $s++;
 
