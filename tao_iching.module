@@ -232,6 +232,8 @@ function tao_iching_form_submit($form, &$form_state) {
 // makes the page output for the result page
 function tao_iching_view() {
 
+ include drupal_get_path('module', 'tao_iching') . "/includes/books.php";
+
 // dont let the user land on this page first
   $path = $GLOBALS['base_url'];
 
@@ -240,53 +242,189 @@ function tao_iching_view() {
 	die();
    } 
 
-
-   $rendered_content = "<div class='sm_hexag'>";
+$content = "<div class='iching_content'>";
+   $content .= "<div class='sm_hexag'>";
 
      foreach ($_SESSION['final_hexagram'] as $imgname) {
 
-     $rendered_content .=  "<div class='min_line'>";
-     $rendered_content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $imgname . "_min.png'>";
-     $rendered_content .=  "</div>";
+     $content .=  "<div class='min_line'>";
+     $content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $imgname . "_min.png'>";
+     $content .=  "</div>";
     }
 
-   $rendered_content .= "</div>";
+   $content .= "</div>";
 
-   $rendered_content .= "<div class='sm_hexag'>";
+   $content .= "<div class='sm_hexag'>";
 
      if ($_SESSION['final_changed'] == "No Change") {  
 
-      $rendered_content .=  "<div class='sm_iching_blurb'>";
-      $rendered_content .=  "No changing lines. The situation is expected to remain the same.";
-      $rendered_content .=  "</div>";
+      $content .=  "<div class='sm_iching_blurb'>";
+      $content .=  "No changing lines. The situation is expected to remain the same.";
+      $content .=  "</div>";
      }
 
      if (($_SESSION['final_changed'] != NULL) && ($_SESSION['final_changed'] != "No Change")) {
 
       foreach ($_SESSION['final_changed'] as $chgname) {
 
-       $rendered_content .=  "<div class='min_line'>";
-       $rendered_content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname . "_min.png'>";
-       $rendered_content .=  "</div>";
+       $content .=  "<div class='min_line'>";
+       $content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname . "_min.png'>";
+       $content .=  "</div>";
       }
      } // end if
 
-   $rendered_content .= "</div>";
+   $content .= "</div>";
 
-  $rendered_content .= "<div class='iching_blurb'>";
-  $rendered_content .= "<a href='i-ching'><b>Click Here to start again.</b></a>";
-  $rendered_content .= "</div>";
+  $content .= "<div class='iching_blurb'>";
+  $content .= "<a href='i-ching'><b>Click Here to start again.</b></a>";
+  $content .= "</div>";
+  $content .= "</div>";
 
 //    dpm($_SESSION, $name=NULL);
+// include drupal_get_path('module', 'tao_iching') . "/includes/result_html.php"; 
 
- return $rendered_content;
+  $content .= "<div class='iching_container'>";
+
+
+  $rawhex = $_SESSION['final_hexagram'];
+  $finalchg = $_SESSION['final_changed'];
+
+// get rid of the change indicators and display the final hexagram(s)
+  $finalhex = tao_iching_rawhex_cleanup($_SESSION['final_hexagram']);
+
+// get the book numbers for the hexagram(s)
+  $bookname = tao_iching_booklookup(array_reverse($finalhex));
+
+  if($finalchg != "No Change") {
+   $ch_bookname = tao_iching_booklookup(array_reverse($finalchg));
+  }
+
+
+// print the question
+
+     if ($_SESSION['final_question'] != NULL) {
+       $content .= "<div class='iching_blurb'>";
+       $content .= "<b>";
+       $content .= $_SESSION['final_question'];
+       $content .= "</b>";
+       $content .= "</div>";
+     }
+     $content .= "<div class='iching_blurb'>";
+     $content .= "<br>";
+     $content .= "</div>";
+
+  $content .= "<div class='iching_tab'>";
+// bring in html to make our javascript work 
+  $content .= file_get_contents(drupal_get_path('module', 'tao_iching') . "/includes/result_html.php");
+
+  $content .= "</div>";
+
+  $content .= "<div id='Current' class='iching_tabcontent'>";
+  $content .= "<h3>Current</h3>";
+
+     $content .= "<div class='hexag'>";
+      foreach ($finalhex as $hexname) {
+       $content .= "<div class='sm_line'>";
+       $content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $hexname . "_sm.png'>";
+       $content .= "</div>";
+      }
+     $content .= "</div>";
+
+
+   $content .= "<div class='iching_links'>";
+
+   $content .= "<a class='colorbox-inline' href='?width=600&height=500&inline=true#iching_j_text'>The Judgement</a>";
+   $content .= "<div style='display: none;'>";
+   $content .= "<div id='iching_j_text'><p>" . $book[$bookname]['judge'] . "</p></div>";
+   $content .= "</div>";
+
+   $content .= "<a class='colorbox-inline' href='?width=600&height=500&inline=true#iching_i_text'>The Image</a>";
+   $content .= "<div style='display: none;'>";
+   $content .= "<div id='iching_i_text'><p>" . $book[$bookname]['image'] . "</p></div>";
+   $content .= "</div>";
+
+   $content .= "</div>";
+
+
+   $content .= $bookname . " - ";
+   $content .= $book[$bookname]['desc'];
+
+
+  $content .= "</div>";
+
+  $content .= "<div id='Changing' class='iching_tabcontent'>";
+  $content .= "<h3>Changing</h3>";
+
+
+    if($finalchg != "No Change") {
+     $content .= "<div class='hexag'>";
+	$book_cng_key = tao_iching_find_top_changing($rawhex);
+         foreach ($rawhex as $rawname) {
+          $content .= "<div class='sm_line'>";
+          $content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $rawname . "_sm.png'>";
+          $content .= "</div>";
+         }
+     $content .= "</div>";
+    } else $content .= "<div>There are no changing lines. The situation is expected to remain the same in the near future.</div>";
+
+      if($finalchg != "No Change") {
+       $content .= $book[$ch_bookname][$book_cng_key];
+	}
+
+
+$content .= "</div>";
+
+$content .= "<div id='Transformed' class='iching_tabcontent'>";
+ $content .= "<h3>Transformed</h3>";
+
+    if($finalchg != "No Change") {
+     $content .= "<div class='hexag'>";
+       foreach ($finalchg as $chgname) {
+        $content .= "<div class='sm_line'>";
+        $content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname . "_sm.png'>";
+        $content .= "</div>";
+       }
+      $content .= "</div>";
+     } else $content .= "<div>There are no changing lines. The situation is expected to remain the same in the near future.</div>";
+
+
+      if($finalchg != "No Change") {
+   $content .= "<div class='iching_links'>";
+
+   $content .= "<a class='colorbox-inline' href='?width=600&height=500&inline=true#iching_j_ch_text'>The Judgement</a>";
+   $content .= "<div style='display: none;'>";
+   $content .= "<div id='iching_j_ch_text'><p>" . $book[$ch_bookname]['judge'] . "</p></div>";
+   $content .= "</div>";
+   $content .= "<a class='colorbox-inline' href='?width=600&height=500&inline=true#iching_i_ch_text'>The Image</a>";
+   $content .= "<div style='display: none;'>";
+   $content .= "<div id='iching_i_ch_text'><p>" . $book[$ch_bookname]['image'] . "</p></div>";
+   $content .= "</div>";
+
+   $content .= "</div>";
+
+      }
+
+   if($finalchg != "No Change") {
+    $content .= $ch_bookname . " - ";
+    $content .= $book[$ch_bookname]['desc'];
+   }
+
+  $content .= "</div>"; 
+  $content .= "</div>";
+
+  $content .= "<SCRIPT>";
+// Get the element with id="defaultOpen" and click on it
+
+  $content .= "document.getElementById('defaultOpen').click();";
+  $content .= "</SCRIPT>";
+
+ return $content;
 
    $_SESSION['final_hexagram'] = NULL;
    $_SESSION['final_changed'] = NULL;
    $_SESSION['final_question'] = NULL;
+
  }  // END tao_iching_view()
-
-
 
 
 // returns the book name from the database when passed a hexagram array
@@ -371,5 +509,15 @@ function tao_iching_rawhex_cleanup($raw) {
    return $cleaned;
 
 } // end tao_iching_rawhex_cleanup()
+
+function tao_iching_test_function() {
+
+   $content .= "</div>";
+
+  $content .= "<div class='iching_blurb'>";
+  $content .= "<a href='i-ching'><b>Click Here to start again.</b></a>";
+  $content .= "</div>";
+return $content;
+}
 
 
