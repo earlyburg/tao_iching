@@ -1,17 +1,17 @@
-    .iching_content {
+  .iching_content {
     float:left;
     max-width:40%;
     display:block;
     margin-left:10px;
-
+    padding:5px;
   }
 
   .iching_container {
     vertical-align:top;
     overflow: hidden;
-    width: 50%;
+    width: 50%; 
     display: inline-block;
-    padding: 0px 0px 0px 40px;
+    padding: 10px 0px 0px 40px;
     vertical-align: top;
   }
 
@@ -40,17 +40,12 @@
     padding:5px;
   }
 
-  .iching_blurb {
+ .iching_content .iching_blurb {
    max-width:380px;
   }
 
   .sm_iching_blurb {
    max-width:420px;
-  }
-
-  .iching_container,
-  .iching_content {
-   min-width:275px;
   }
 
   .min_line {
@@ -63,7 +58,6 @@
   }
 
   .iching_links {
-/*   width: 400px; */
    display: block;
   }
 
@@ -90,7 +84,6 @@
 /* Style the buttons that are used to open the tab content */
   .iching_tab button {
     background-color: inherit;
-/*    float: left; */
     display:inline-block;
     border: none;
     outline: none;
@@ -110,17 +103,16 @@
   }
 
 /* Style the tab content */
-.iching_tabcontent {
+  .iching_tabcontent {
     display: none;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
   } 
 
-
   .iching_tabcontent {
     animation: fadeEffect 1s; /* Fading effect takes 1 second */
-}
+  }
 
 /* Go from zero to full opacity */
   @keyframes fadeEffect {
@@ -147,14 +139,14 @@
 
 
 @media screen and (max-width: 689px) and (min-width: 480px) {
- .iching_tab button {
-  display:inherit;
-  width:100%;
-  padding: 10px 16px;
+  .iching_tab button {
+    display:inherit;
+    width:100%;
+    padding: 10px 16px;
   }
-.iching_container {
+  .iching_container {
     width: 90%;
-}
+  }
 
   .iching_container,
   .iching_content {
@@ -189,19 +181,19 @@
   padding: 10px 16px;
   }
 
- .iching_container {
+  .iching_container {
     vertical-align:top;
     overflow: hidden;
     width: 99%;
     display: inline-block;
     padding: 0px 0px 0px 0px;
     vertical-align: top;
-}
+   }
 
-.iching_container, 
-.iching_content {
+   .iching_container, 
+   .iching_content {
     min-width: 245px;
-}
+   }
 }
 
 

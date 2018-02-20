@@ -40,7 +40,7 @@ drupal_session_start();
    }
 
    if ($arraysize != 0) {
-    print "<div class='iching_container'>";
+    print "<div class='coins_container'>";
 
     print "<div class='iching_coindiv'>";
 
@@ -97,7 +97,7 @@ drupal_session_start();
     print "<img src='/sites/all/modules/tao_iching/imgs/" . $_SESSION['hexagram'][$s] . "_sm.png'>";
     print "</div>"; // sm_line
 
-    print "</div>"; // .iching_container
+    print "</div>"; // .coins_container
 
     print "<div class='iching_blurb'>";
     print "<br>";
@@ -113,7 +113,7 @@ drupal_session_start();
   $output =_block_get_renderable_array(_block_render_blocks(array($socblock)));
   print render($output);
 
-print "</div>";
+print "</div>"; // end .iching_content
 $s++;
 ?>
 
