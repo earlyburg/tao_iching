@@ -63,5 +63,4 @@ INSERT INTO `hexagrams` (`book_number`, `line1`, `line2`, `line3`, `line4`, `lin
 ('62', 'yin', 'yin', 'yang', 'yang', 'yin', 'yin'),
 ('63', 'yang', 'yin', 'yang', 'yin', 'yang', 'yin'),
 ('64', 'yin', 'yang', 'yin', 'yang', 'yin', 'yang');
-ALTER TABLE `hexagrams`
-  ADD UNIQUE KEY `book_number` (`book_number`,`line1`,`line2`,`line3`,`line4`,`line5`,`line6`);
+
