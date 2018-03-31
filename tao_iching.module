@@ -13,7 +13,7 @@ function tao_iching_permission() {
       'title' => t('Access the Tao I-Ching'),
     )
   );
-}
+} // END tao_iching_permission
 
 function tao_iching_menu() {
 
