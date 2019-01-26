@@ -640,10 +640,8 @@ $book['11']['line4'] =
   In times of mutual confidence, people of high rank come in close contact with the lowly quite simply and without boasting of their wealth. This is not due to the force of circumstances but corresponds with their inmost sentiment. The approach is made quite spontaneously, because it is based on inner conviction.';
 $book['11']['line5'] = 
 ' Six in the fifth place means:
-  The sovereign I
-  Gives his daughter in marriage. 
-  This brings blessing
-  And supreme good fortune. <br>
+  The sovereign I gives his Daughter in marriage. 
+  This brings blessing and supreme good fortune. <br>
   The sovereign I is T\'ang the Completer. By his decree the imperial princesses, although higher in rank than their husbands, had to obey them like all other wives. Here too we are shown a truly modest union of high and low that brings happiness and blessings.';
 $book['11']['line6'] = 
 ' Six at the top means:

@@ -1,8 +1,7 @@
-; $Id: tao_iching,v 1.0 01/29/2018 earlyburg
+; $Id: tao_iching,v 1.0 01/21/2019 earlyburg
 name = Tao I-Ching
-package = Tao Custom Modules
 description = A module to allow the user to cast the I-Ching.
 core = 7.x
 dependencies[] = colorbox:colorbox
-dependencies[] = addtoany:addtoany
+
 
