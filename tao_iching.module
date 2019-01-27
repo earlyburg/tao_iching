@@ -551,7 +551,6 @@ function tao_iching_view() {
  }
 
 
-
 /**
  * tao_iching_booklookup($hex)
  *
@@ -571,7 +570,6 @@ function tao_iching_booklookup($hex) {
 	return $bookname;
 
 }
-
 
 
 /**
@@ -616,7 +614,6 @@ function tao_iching_find_top_changing($rawhex) {
 }
 
 
-
 /**
  * tao_iching_rawhex_cleanup($raw)
  *
@@ -624,20 +621,16 @@ function tao_iching_find_top_changing($rawhex) {
  */
 function tao_iching_rawhex_cleanup($raw) {
 
-  	$yang_needle = "yang_changing";
-  	$yang_replacement = "yang";
-  	$yin_needle = "yin_changing";
-  	$yin_replacement = "yin";
-
    	for($i=0;$i<count($raw);$i++) {
 
-     		if($raw[$i] == $yang_needle) {
-      			$raw[$i] = $yang_replacement;
-     		}
-     		if($raw[$i] == $yin_needle) {
-      			$raw[$i] = $yin_replacement;
-     		}
-
+		switch ($raw[$i]) {
+     			case "yang_changing":
+        			$raw[$i] = "yang";
+        			break;
+     			case "yin_changing":
+        			$raw[$i] = "yin";
+        			break;
+		}
   	}
    	$cleaned = $raw;
    	return $cleaned;
