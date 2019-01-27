@@ -3,5 +3,6 @@ name = Tao I-Ching
 description = A module to allow the user to cast the I-Ching.
 core = 7.x
 dependencies[] = colorbox:colorbox
+dependencies[] = ctools:ctools
 
 

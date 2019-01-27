@@ -108,9 +108,9 @@ drupal_add_js(drupal_get_path('module', 'tao_iching') . '/js/tao_iching.js');
 
 
 /**
- * AJAX callback 
+ * tao_iching_submit_callback()
  *
- * builds the hexagrams and handles $_SESSION
+ * AJAX callback builds the hexagrams and handles $_SESSION
  */
 function tao_iching_submit_callback($form, $form_state) {
 
