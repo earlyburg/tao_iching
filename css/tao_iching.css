@@ -35,10 +35,17 @@
    padding:0px 25px 0px 25px;
 }
 
+#Current,
+#Changing,
+#Transformed {
+   z-index: -1;
+}
+
 #Current .hexag,
 #Changing .hexag,
 #Transformed .hexag {
    float:left;
+
 }
 
 .sm_hexag {
