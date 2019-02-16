@@ -15,7 +15,7 @@ function openBook(evt, bookName) {
     	}
 
     	// Show the current tab, and add an "active" class to the button that opened the tab
-    	document.getElementById(bookName).style.display = "block";
+    	document.getElementById(bookName).style.display = "inline-block";
     	evt.currentTarget.className += " active";
 }
 
