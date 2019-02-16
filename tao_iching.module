@@ -117,6 +117,7 @@ function tao_iching_submit_callback($form, $form_state) {
 	$element = $form['iching_box'];
 	$_SESSION['question'] = $form['question']['#value'];
 
+
 	ctools_include('ajax');
 	ctools_add_js('ajax-responder');
 	$commands[] = ctools_ajax_command_redirect('result');
@@ -162,6 +163,11 @@ function tao_iching_submit_callback($form, $form_state) {
 		if ($_SESSION['final_changed'] != "No Change") {
 			$_SESSION['final_changed'] = array_reverse($_SESSION['final_changed']);
 		}
+
+		// log the user's question
+		$type = "Tao I-Ching";
+		$message = "Someone asked the I-Ching: " . $form['question']['#value'];
+		watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NOTICE, $link = NULL);
 
 		// clean up
 		$_SESSION['hexagram'] = NULL;
