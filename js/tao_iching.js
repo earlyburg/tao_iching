@@ -20,24 +20,52 @@ function openBook(evt, bookName) {
 }
 
 
-jQuery(document).ready(function($)
-{
+jQuery(document).ready(function($) {
 
   $("#creditcontainer_toggle").click(function()
   {
-
     $("#creditcontainer").slideToggle( "slow");
 
-	  if ($("#creditcontainer_toggle").text() == "Credits")
+      if ($("#creditcontainer_toggle").text() == "Credits")
       {
         $("#creditcontainer_toggle").html("Hide Credits")
       }
-	  else
+      else
       {
         $("#creditcontainer_toggle").text("Credits")
       }
-
   });
 
+  var coin = document.getElementById('coin');
+
+  var PIECHART = document.getElementById('piechart');
+
+  var data = [{
+    values: valArray,
+    labels: labelArray,
+    type: 'pie',
+    hoverinfo: 'label',
+    textinfo: 'label+percent'
+  }];
+
+  var layout = {
+    height: 400,
+    width: 600,
+    showlegend: false,
+  };
+
+  Plotly.newPlot('piechart', data, layout, {responsive: true});
+
 });
+
+
+/**
+ * Modify form values prior to form submission.
+*/
+Drupal.ajax.prototype.beforeSubmit = function (form_values, element, options)
+ {
+
+ coin.innerHTML = '<img class="heads animate-coin" src="/sites/all/modules/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/sites/all/modules/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/sites/all/modules/tao_iching/imgs/heads.png"/>';
+
+ };
 

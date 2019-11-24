@@ -1,22 +1,23 @@
-
 <div class='iching_content'>
 <?php
-// dpm($form, $name = NULL);
-print drupal_render_children($form);
+$formOutput = drupal_render_children($form);
+echo $formOutput;
 ?>
 </div> <!-- END iching_content -->
-
 <div class="iching_container">
 
 <div class="intro_blurb">
+<a href="/statistics">Top Ten Hexagrams</a>.<br>
 This program uses the three coins method to produce hexagram lines.<br>
 The applicable changing lines are obtained through Master Yin's rules.<br>
+Toss the coins 6 times to obtain the reading, or get an <a href="/result/instant">instant reading</a>.
+
 </div>
 
 <div class="intro_blurb">
 Keep in mind that as long as the algorithm can actually reach each and every
 possible combination of hexagrams and changing lines, it doesn't really matter what the
-probability is that each symbol can appear if you believe that a supreme Force is responsible for influencing the results.
+probability is that each symbol can appear, if you believe that a higher power is responsible for influencing the results.
 </div>
 
 <div class="creditcontainer_toggle_wrapper">
@@ -40,3 +41,6 @@ In particular the most complete and freely available sources are:<br>
 </div>
 
 </div> <!-- END iching_container -->
+
+
+

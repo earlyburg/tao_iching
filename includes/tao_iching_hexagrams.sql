@@ -1,4 +1,4 @@
-INSERT INTO `hexagrams` (`book_number`, `line1`, `line2`, `line3`, `line4`, `line5`, `line6`) VALUES
+INSERT INTO `tao_iching_hexagrams` (`book_number`, `line1`, `line2`, `line3`, `line4`, `line5`, `line6`) VALUES
 ('01', 'yang', 'yang', 'yang', 'yang', 'yang', 'yang'),
 ('02', 'yin', 'yin', 'yin', 'yin', 'yin', 'yin'),
 ('03', 'yang', 'yin', 'yin', 'yin', 'yang', 'yin'),
@@ -63,4 +63,3 @@ INSERT INTO `hexagrams` (`book_number`, `line1`, `line2`, `line3`, `line4`, `lin
 ('62', 'yin', 'yin', 'yang', 'yang', 'yin', 'yin'),
 ('63', 'yang', 'yin', 'yang', 'yin', 'yang', 'yin'),
 ('64', 'yin', 'yang', 'yin', 'yang', 'yin', 'yang');
-
