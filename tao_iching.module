@@ -203,7 +203,13 @@ function tao_iching_submit_callback($form, $form_state) {
 
 		// log the user's question
 		$type = "Tao I-Ching";
-		$message = $user->name . " asked the I-Ching: " . $form['question']['#value'];
+
+		if ( $user->uid ) {
+			$message = $user->name . " asked the I-Ching: " . $form['question']['#value'];
+		} else {
+			$message = "An anonymous visitor asked the I-Ching: " . $form['question']['#value'];
+		}
+
 		watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NOTICE, $link = NULL);
 		$_SESSION['TaoTeChingID'] = NULL;
 		print ajax_render($commands);
