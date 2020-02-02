@@ -4,7 +4,7 @@ class I_Ching {
 
 	function __construct() {
 
-		$this->iching = array("initial" => "", "changed" => "", "question" => "");
+		$this->iching = array("initial" => array(), "changed" => array(), "question" => "");
 		// define the 8 trigrams
 		$this->kun = array(0, 0, 0);
 		$this->gen = array(1, 0, 0);
