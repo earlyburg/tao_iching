@@ -1,4 +1,4 @@
-; $Id: tao_iching,v 1.3 09/01/2019 earlyburg
+; $Id: tao_iching,v 1.4 09/01/2019 earlyburg
 name = Tao I-Ching
 description = A module to allow the user to cast the I-Ching.
 core = 7.x
