@@ -86,6 +86,13 @@
     padding:5px;
 }
 
+#iching_form_blurb {
+
+   max-width:380px;
+
+   height:20px; 
+}
+
 .iching_content .iching_blurb {
 
    max-width:380px;
