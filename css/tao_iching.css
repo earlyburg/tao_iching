@@ -1,88 +1,150 @@
-  .iching_content {
-    float:left;
-    max-width:40%;
-    display:block;
-    margin-left:10px;
-    padding:5px;
+#coin img {
+   padding:2px;  
+}
+
+.animate-coin {
+    animation: flip 1.4s 1;
+}
+
+@keyframes flip {
+  0% {
+    transform: scale3d(1,1,1) rotateX(0deg);
   }
 
-  .iching_container {
-    vertical-align:top;
-    overflow: hidden;
-    width: 50%; 
-    display: inline-block;
-    padding: 10px 0px 0px 40px;
-    vertical-align: top;
+  100% {
+    transform: scale3d(1,1,1) rotateX(2880deg);
   }
+}
 
-  .line { 
-   height:52px;
-  }
+#piechart {
+   max-width:600px;
+   max-height:400px;
+}
 
-  .hexag {
-    display:inline-block;
-    padding:0px 25px 0px 25px;
+#tao-iching-admin .form-type-checkbox { 
+   max-width: 450px;
+   display: inline-block;
+   margin: 2px;
+}
 
-  }
-
-  #Current .hexag,
-  #Changing .hexag,
-  #Transformed .hexag {
+.iching_content {
    float:left;
-  }
+   max-width:40%;
+   display:block;
+   margin-left:10px;
+   padding:5px;
+}
 
-  .sm_hexag {
-    display:inline-block;
-    padding:0px 10px 0px 10px;;
-  }
+.iching_container {
+   vertical-align:top;
+   overflow: hidden;
+   width: 50%; 
+   display: inline-block;
+   padding: 10px 0px 0px 40px;
+   vertical-align: top;
+}
 
-  .iching_coindiv img {
+#edit-question {
+   max-width:300px;
+}
+
+#edit-submit-button {
+   display:block;
+}
+
+
+.line { 
+   height:52px;
+}
+
+.hexag {
+   display:inline-block;
+   padding:0px 25px 0px 25px;
+}
+
+#Current,
+#Changing,
+#Transformed {
+   z-index: -1;
+}
+
+#Current .hexag,
+#Changing .hexag,
+#Transformed .hexag {
+
+   float:left;
+}
+
+.sm_hexag {
+
+   display:inline-block;
+   padding:0px 10px 0px 10px;;
+}
+
+.iching_coindiv img {
+
     padding:5px;
-  }
+}
 
- .iching_content .iching_blurb {
+#iching_form_blurb {
+
    max-width:380px;
-  }
 
-  .sm_iching_blurb {
+   height:20px; 
+}
+
+.iching_content .iching_blurb {
+
+   max-width:380px;
+}
+
+.sm_iching_blurb {
+
    max-width:420px;
-  }
+}
 
-  .min_line {
+.min_line {
+
    height:10px;
-  }
+}
 
-  .sm_line {
+.sm_line {
+
    height:30px;
    width:120px;
-  }
+}
 
-  .iching_links {
+.iching_links {
+
    display: block;
-  }
+}
 
-  .iching_links .colorbox-inline {
+.iching_links .colorbox-inline {
+
    padding: 0px 6px 5px 6px;
    font-weight:bold;
    display:inline-block;
-  }
+}
 
-  #cboxLoadedContent > div:nth-child(1) > p:nth-child(1) {
+#cboxLoadedContent > div:nth-child(1) > p:nth-child(1) {
+
    line-height: 1.5;
    font-family: Verdana, Geneva, sans-serif;
    font-size: 1.0em;
-   }
+}
 
 
 /* Style the tab */
-  .iching_tab {
+.iching_tab {
+
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
-  }
+}
 
 /* Style the buttons that are used to open the tab content */
-  .iching_tab button {
+.iching_tab button {
+
     background-color: inherit;
     display:inline-block;
     border: none;
@@ -90,40 +152,42 @@
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
-  }
+}
 
 /* Change background color of buttons on hover */
-  .iching_tab button:hover {
+.iching_tab button:hover {
+
     background-color: #ddd;
-  }
+}
 
 /* Create an active/current tablink class */
-  .iching_tab button.active {
+.iching_tab button.active {
     background-color: #ccc;
-  }
+}
 
 /* Style the tab content */
-  .iching_tabcontent {
+.iching_tabcontent {
+
     display: none;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-  } 
+} 
 
-  .iching_tabcontent {
+.iching_tabcontent {
     animation: fadeEffect 1s; /* Fading effect takes 1 second */
-  }
+}
 
 /* Go from zero to full opacity */
-  @keyframes fadeEffect {
+@keyframes fadeEffect {
     from {opacity: 0;}
     to {opacity: 1;}
-  }
+}
 
-  #creditcontainer {
+#creditcontainer {
    font-size: 0.7em;
    display:block;
-  }
+}
 
 /**----------------------------Responsive styles................*/
 
@@ -131,57 +195,65 @@
 @media screen and (max-width: 900px) and (min-width: 690px) {
 
  .iching_tab button {
-  display:inherit;
-  width:100%;
-  padding: 10px 16px;
+   display:inherit;
+   width:100%;
+   padding: 10px 16px;
   }
 }
 
 
 @media screen and (max-width: 689px) and (min-width: 480px) {
-  .iching_tab button {
-    display:inherit;
-    width:100%;
-    padding: 10px 16px;
-  }
-  .iching_container {
-    width: 90%;
-  }
 
-  .iching_container,
-  .iching_content {
+ .iching_tab button {
+
+   display:inherit;
+   width:100%;
+   padding: 10px 16px;
+ }
+
+ .iching_container {
+
+   width: 90%;
+ }
+
+ .iching_container,
+ .iching_content {
+
    min-width:90%;
-  }
-
+ }
 }
 
 
 @media screen and (max-width: 390px) and (min-width: 350px) {
+
  .iching_links .colorbox-inline {
-	width:130px;
-  }
+
+   width:130px;
+ }
 }
 
 
 
 @media screen and (max-width: 768px) {
 
-  .iching_blurb {
-	padding: 15px 0px 0px 0px;
-   }
+ .iching_blurb {
 
+   padding: 15px 0px 0px 0px;
+ }
 }
 
 
 @media screen and (max-width: 480px) { 
 
  .iching_tab button {
-  display:inherit;
-  width:100%;
-  padding: 10px 16px;
+
+    display:inherit;
+    width:100%;
+    padding: 10px 16px;
   }
 
-  .iching_container {
+ .iching_container {
+
     vertical-align:top;
     overflow: hidden;
     width: 99%;
@@ -190,9 +262,10 @@
     vertical-align: top;
    }
 
-   .iching_container, 
-   .iching_content {
-    min-width: 245px;
+ .iching_container, 
+ .iching_content {
+
+   min-width: 245px;
    }
 }
 
