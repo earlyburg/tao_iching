@@ -4,6 +4,7 @@ class I_Ching {
 
 	function __construct() {
 
+		// container
 		$this->iching = array("initial" => array(), "changed" => array(), "question" => "");
 		// define the 8 trigrams
 		$this->kun = array(0, 0, 0);
@@ -104,7 +105,7 @@ class I_Ching {
 		while($i < 6) {
 
 			$hexagram[] = $this->line();
-			$i++;		
+			$i++;
 		}
 		return $hexagram;
 	}
@@ -152,8 +153,9 @@ class I_Ching {
 		// $this->iching['initial'][0] is the bottom line
 		return $this->iching;
 	}
-
-
+// @TODO
+// @TODO change this to get all the changing lines and get that info displayable
+// @TODO
 	/**
 	 * returns the number of the top changing line
 	 */
@@ -244,9 +246,9 @@ class I_Ching {
 			$difference = $difference/60; // minutes
 			if ($difference >= 60) {
 
-				return TRUE;		
+				return TRUE;
 			} else {
-				return FALSE; 
+				return FALSE;
 			}
 		}
 	}
@@ -294,7 +296,7 @@ class I_Ching {
 		$ret = FALSE;
 		if ( !empty($id) ) {
 
-			$ret = db_query('SELECT id FROM {tao_iching_readings} 
+			$ret = db_query('SELECT id FROM {tao_iching_readings}
 				WHERE id = :id', array(
 			  		':id' => $id,
 				))->fetchField();
@@ -338,7 +340,7 @@ class I_Ching {
 
 		$ret = "";
 		if ( !empty($id) ) {
-		
+
 			$count = db_query('SELECT id FROM {tao_iching_lines}
 				WHERE id = :id', array(
 						':id' => $id,
@@ -378,16 +380,16 @@ class I_Ching {
 			if ( $this->readingExist($id) != FALSE ) {
 
 				// get the readings table info
-				$readingArray = db_query('SELECT question, timestamp FROM {tao_iching_readings} 
+				$readingArray = db_query('SELECT question, timestamp FROM {tao_iching_readings}
 					WHERE id = :id', array(
 						':id' => $id
 					))->fetchAssoc();
 				// get the trigrams created
-				$lines = db_query('SELECT throw_num, line, tri_name, code, coinsval FROM {tao_iching_lines} 
+				$lines = db_query('SELECT throw_num, line, tri_name, code, coinsval FROM {tao_iching_lines}
 					WHERE id = :id', array(
 						':id' => $id
 					))->fetchAll();
-	
+
 				foreach($lines as $key => $value) {
 
 					$this->iching['initial'][$key]['line'] = $value->line;
@@ -414,12 +416,12 @@ class I_Ching {
 	 */
 	public function findBook($hexagram) {
 
-		$bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams} 
-			WHERE line1 = :line1 
-			AND line2 = :line2 
-			AND line3 = :line3 
-			AND line4 = :line4 
-			AND line5 = :line5 
+		$bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
+			WHERE line1 = :line1
+			AND line2 = :line2
+			AND line3 = :line3
+			AND line4 = :line4
+			AND line5 = :line5
 			AND line6 = :line6', array(
 		  		':line1' => $hexagram[0]['line'],
 		  		':line2' => $hexagram[1]['line'],
@@ -429,7 +431,7 @@ class I_Ching {
 		  		':line6' => $hexagram[5]['line'],
 			))->fetchField();
 
-		$bookArray = db_query('SELECT descr, judge, image, line_one, line_two, line_three, line_four, line_five, line_six FROM {tao_iching_books} 
+		$bookArray = db_query('SELECT descr, judge, image, line_one, line_two, line_three, line_four, line_five, line_six FROM {tao_iching_books}
 			WHERE number = :number', array(
 				':number' => $bookNumber
 			))->fetchAssoc();
@@ -442,12 +444,12 @@ class I_Ching {
 	 */
 	public function findBooknum($hexagram) {
 
-		$bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams} 
-			WHERE line1 = :line1 
-			AND line2 = :line2 
-			AND line3 = :line3 
-			AND line4 = :line4 
-			AND line5 = :line5 
+		$bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
+			WHERE line1 = :line1
+			AND line2 = :line2
+			AND line3 = :line3
+			AND line4 = :line4
+			AND line5 = :line5
 			AND line6 = :line6', array(
 		  		':line1' => $hexagram[0]['line'],
 		  		':line2' => $hexagram[1]['line'],
@@ -461,5 +463,3 @@ class I_Ching {
 
 
 } // END class I_Ching
-
-
