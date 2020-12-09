@@ -1,4 +1,20 @@
 <?php
+
+/**
+ * Implements hook_config_info().
+ */
+function tao_iching_config_info() {
+  $prefixes['tao_iching.settings'] = array(
+    'label' => t('Tao I-Ching settings'),
+    'group' => t('Configuration'),
+  );
+  $prefixes['tao_iching_admin.settings'] = array(
+    'label' => t('Tao I-Ching Admin settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
 /**
  * Implements hook_menu().
  */
@@ -8,38 +24,124 @@ function tao_iching_menu() {
 	$items['i-ching'] = array(
 		'title' => 'I-Ching, the Book of Changes',
 		'description' => 'Cast your I-Ching, and read an interpretation.',
-		'page callback' => 'drupal_get_form',
-		'page arguments' => array('tao_iching_form'),
-		'access callback' => TRUE,
+    'page callback' => 'backdrop_get_form',
+		'page arguments' => array('tao_iching_reading'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
 	);
 	$items['result/%'] = array(
 		'title' => 'I-Ching, the Book of Changes',
 		'page arguments' => array(1),
 		'description' => 'Cast your I-Ching, and read an interpretation.',
 		'page callback' => 'tao_iching_view',
-		'access arguments' => array('access content')
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
 	);
-	$items['statistics'] = array(
-		'title' => 'I-Ching, the Book of Changes',
-		'description' => 'I-Ching Statistics',
-		'page callback' => 'tao_iching_stats',
-		'access arguments' => array('access content')
-	);
+#	$items['statistics'] = array(
+#		'title' => 'I-Ching, the Book of Changes',
+#		'description' => 'I-Ching Statistics',
+#		'page callback' => 'tao_iching_stats',
+#		'access arguments' => array('access content')
+#	);
 	$items['admin/config/user-interface/tao_iching'] = array(
 		'title' => 'Tao I-Ching',
 		'description' => 'Tao I-Ching Settings.',
-		'page callback' => 'drupal_get_form',
-    		'page arguments' => array(
-			'tao_iching_admin'
-		),
-		'access arguments' => array('access administration pages'),
-		'file' => 'system.admin.inc',
-		'file path' => drupal_get_path('module', 'system'),
+		'page callback' => 'tao_iching_admin',
+		'access arguments' => array(
+      'access administration pages'
+    ),
 		'type' => MENU_NORMAL_ITEM,
 	);
 	return $items;
 }
 
+/**
+ * Implements hook_form().
+ */
+function tao_iching_reading($form, &$form_state) {
+
+  $config = config('tao_iching.settings');
+  $basePath = backdrop_get_path('module', 'tao_iching');
+  $form = array();
+  $form['#config'] = 'tao_iching.settings';
+	$form['question'] = array(
+   	'#type' => 'textarea',
+   	'#title' => 'Ask A Question.',
+   	'#cols' => 10,
+   	'#resizable' => FALSE,
+   	'#rows' => 1,
+    '#default_value' => $config->get('question'),
+   );
+
+  $form['iching_box'] = array(
+    '#type' => 'markup',
+    '#prefix' => '<div id="iching_box">',
+    '#suffix' => '</div>',
+    '#markup' => "<div id='coin'><img src='/modules/tao_iching/imgs/heads.png'><img src='/modules/tao_iching/imgs/heads.png'><img src='/modules/tao_iching/imgs/heads.png'></div><div id='iching_form_blurb'></div><div class='sm_line'></div>",
+  );
+
+  $form['submit_button'] = array(
+    '#type' => 'submit',
+    '#ajax' => array(
+      'callback' => 'tao_iching_submit_callback',
+      'wrapper' => 'iching_box',
+    ),
+    '#value' => t('Toss The Coins'),
+		'#attributes' => array(
+			'class' => array(
+				'i-ching-submit'
+			),
+			'name' => array(
+				'i-ching-toss',
+			),
+		),
+  );
+  return $form;
+}
+
+/**
+ * Implements hook_form_validate().
+ */
+function tao_iching_reading_validate($form, &$form_state) {
+
+  $I_Ching = new I_Ching();
+  $formValues = $form_state['values'];
+  $config = config('tao_iching.settings');
+
+
+
+
+
+#  if ( $I_Ching->checkNumber($sessionId) == 6 ) {
+#    backdrop_set_message('6 was reached'); //--debug
+#    $config->clear('sessionId');
+#    $config->save();
+
+#    backdrop_goto('result/' . $sessionId);
+#  }
+
+
+
+
+
+
+
+
+
+  if ( !empty($formValues['question']) ) {
+    $config->set('question', $formValues['question']);
+  } else {
+      $config->set('question', '');
+  }
+  $config->save();
+}
+
+/**
+ * Implements hook_form_submit().
+ */
+#function tao_iching_form_submit($form, &$form_state) {
+
+#}
 
 /**
  * Implements hook_cron()
@@ -63,86 +165,15 @@ function tao_iching_cron() {
 	tao_iching_crn_cln_db();
 }
 
-
-/**
- * Implements hook_theme_registry_alter().
- * makes the theme registry aware of our module template(s)
- */
-function tao_iching_theme_registry_alter(&$theme_registry) {
-
-	/* Defined path to the current module. */
-	$module_path = drupal_get_path('module', 'tao_iching');
-
-	/* Find all .tpl.php files in this module's folder recursively. */
-	$template_file_objects = drupal_find_theme_templates($theme_registry, '.tpl.php', $module_path);
-
-	/* Iterate through all found template file objects. */
-	foreach ($template_file_objects as $key => $template_file_object) {
-
-		/* If the template has not already been overridden by a theme. */
-		if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
-
-			/* Alter the theme path and template elements. */
-			$theme_registry[$key]['theme path'] = $module_path;
-			$theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
-			$theme_registry[$key]['type'] = 'module';
-		}
-	}
-}
-
-
-/**
- * Implements hook_form_alter().
- */
-function tao_iching_form_alter(&$form, &$form_state, $form_id) {
-
-  	if ($form_id == 'tao_iching_form') {
-
-   		$form['#theme'] = array('tao_iching_form');
-  	}
-}
-
-
-/**
- * Implements hook_theme().
- * a form template for the i-ching page
- */
-function tao_iching_theme($existing, $type, $theme, $path) {
-
-	$items['tao_iching_form'] = array(
-  		'render element' => 'form',
-    		'template' => 'tao_iching-form',
-    		'path' => '/templates',
-  	);
-  	return $items;
-}
-
-
-/**
- * Implements hook_preprocess_page().
- * display the correct title
- */
-function tao_iching_preprocess_page(&$vars) {
-
-	$currentpath = current_path();
-	if (($currentpath == "i-ching") || ($currentpath == "result")) {
-
-		drupal_set_title('I-Ching, the Book of Changes');
- 	}
-}
-
-
 /**
  * Add CSS
  */
-drupal_add_css(drupal_get_path('module', 'tao_iching') . '/css/tao_iching.css', array('group' => CSS_DEFAULT, 'every_page' => FALSE));
-
+backdrop_add_css(backdrop_get_path('module', 'tao_iching') . '/css/tao_iching.css', array('group' => CSS_DEFAULT, 'every_page' => FALSE));
 /**
  * Add Javascript
  */
-drupal_add_js(drupal_get_path('module', 'tao_iching') . '/js/tao_iching.js');
-drupal_add_js(drupal_get_path('module', 'tao_iching') . '/lib/plotly.js');
-
+backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/js/tao_iching.js');
+#backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/lib/plotly.js');
 
 /**
  * tao_iching_submit_callback()
@@ -151,119 +182,113 @@ function tao_iching_submit_callback($form, $form_state) {
 
 	global $user;
 	$I_Ching = new I_Ching();
-	$id = array();
+  $config = config('tao_iching.settings');
+  $formValues = $form_state['values'];
+  $id = [];
+  $sessionId = $config->get('sessionId');
+  // create and set an id for this reading
+  if ( $config->get('sessionId') == "" ) {
+    $id = $I_Ching->makeID();
+    $config->set('sessionId', $id['id'] . '-' . $id['timestamp']);
+    $config->save();
+  } else {
+    $sessionId = $config->get('sessionId');
+#    backdrop_set_message($sessionId); //---debug
+  }
 
-	/* set a session id */	
-	if ( empty($_SESSION['TaoTeChingID']) || !isset($_SESSION['TaoTeChingID']) ) {
+  $idString = $I_Ching->id($sessionId);
+  backdrop_set_message('string is ' . $idString); //---debug
 
-		$id = $I_Ching->makeID();
-		$_SESSION['TaoTeChingID'] = $id['id'];
-	} 
-
-	/* generate hexagram line */
+  /* generate hexagram line */
 	$user_click = $I_Ching->line();
 
-	/* get & set the values from the toss */
+  /* get & set the values from the toss */
 	foreach ($user_click as $key => $value) {
-
 		if ($key != "line" && $key != "coinsval") {
-
-			$keyBucket = $key;
-			$valBucket = $value;
+			$tri_name = $key;
+			$code = $value;
 		}
 	}
-	$sessionId = $_SESSION['TaoTeChingID'];
-	$line = $user_click['line'];
-	$tri_name = $keyBucket;
-	$code = $valBucket;
-	$coinsval = $user_click['coinsval'];
+  $line = $user_click['line'];
+  $coinsval = $user_click['coinsval'];
 
-	/* start a reading database session */
-	if ( $I_Ching->readingExist($sessionId) ) {
-
-		$throw_num = $I_Ching->checkNumber($sessionId) + 1;
-		$return2 = $I_Ching->insertLine($sessionId, $throw_num, $line, $tri_name, $code, $coinsval);
+  /* start a reading database session */
+	if ( $I_Ching->readingExist($idString) ) {
+		$throw_num = $I_Ching->checkNumber($idString) + 1;
+		$I_Ching->insertLine($idString, $throw_num, $line, $tri_name, $code, $coinsval);
 	} else {
-
 		$throw_num = "1";
-		$I_Ching->readingInit($id, $form['question']['#value']);
-		$return1 = $I_Ching->insertLine($sessionId, $throw_num, $line, $tri_name, $code, $coinsval);
+		$I_Ching->readingInit($id, $formValues['question']);
+		$I_Ching->insertLine($idString, $throw_num, $line, $tri_name, $code, $coinsval);
 	}
 
-	$localChing = $I_Ching->myIching($sessionId);
-
-	/* markup form element */	
+	$localChing = $I_Ching->myIching($idString);
+	/* markup form element */
 	$element = $form['iching_box'];
 
-	ctools_include('ajax');
-	ctools_add_js('ajax-responder');
-	$commands[] = ctools_ajax_command_redirect('result/' . $sessionId);
-
-	/* once we have cast the coins 6 times... */
-	if ( $I_Ching->checkNumber($sessionId) == 6 ) {
-
+  if ( $I_Ching->checkNumber($idString) == 6 ) {
 		/* log the user's question */
-		$type = "Tao I-Ching";
-
 		if ( $user->uid ) {
 			$message = $user->name . " asked the I-Ching: " . $form['question']['#value'];
 		} else {
 			$message = "An anonymous visitor asked the I-Ching: " . $form['question']['#value'];
 		}
-
-		watchdog($type, $message, $variables = array(), $severity = WATCHDOG_NOTICE, $link = NULL);
-		$_SESSION['TaoTeChingID'] = NULL;
-		print ajax_render($commands);
+		watchdog("Tao I-Ching", $message, $variables = array(), $severity = WATCHDOG_NOTICE, $link = NULL);
+		$config->clear('sessionId');
+    $config->save();
+    $commands[] = ajax_command_redirect('result/' . $idString);
+    print ajax_render($commands);
 		exit;
 	}
 	/* create the coins display */
-	$s = count( $localChing['initial'] );
-
+	$s = count( $localChing['initial'] ) + 1;
 	/* safeguard against broken sessions */
 	if ( intval($s) >= 7 ) {
-
 		/* delete the reading */
-		$I_Ching->deleteReading($id);
-		drupal_set_message("Apologies, there was a problem with the website. Please try again.");
+		$I_Ching->deleteReading($idString);
+		backdrop_set_message("Apologies, there was a problem with the website. Please try again.");
 		/* clear the session */
-		$_SESSION['TaoTeChingID'] = NULL;
-	} 
+		$config->clear('sessionId');
+    $config->save();
+	}
+
+
+
 	$element['#markup'] = "<div id='coin'>";
 	switch ($coinsval) {
 		case 9:
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
 		       	break;
 		case 8:
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
 		        break;
 		case 7:
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
 		       	break;
 		case 6;
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/tails.png'>";
 			break;
 		case 0;
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-		 	$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-		 	$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+		 	$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+		 	$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
 			break;
 		default:
-			$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-		 	$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
-		 	$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/heads.png'>";
+			$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+		 	$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
+		 	$element['#markup'] .= "<img src='/modules/tao_iching/imgs/heads.png'>";
 	}
 	$element['#markup'] .= "</div>"; /* #coin */
 	/* fix our output to be readable */
 	$raw = $line;
-
 	switch ($raw) {
 		case "yang_changing":
 			$legible = str_replace("yang_changing", "Yang, changing.", $raw);
@@ -278,57 +303,18 @@ function tao_iching_submit_callback($form, $form_state) {
 			$legible = str_replace("yang", "Yang.", $raw);
 			break;
 	}
-
 	$element['#markup'] .= "<div id='iching_form_blurb'>";
 	$element['#markup'] .= "Coin toss " . $s . " yields " . $legible;
 	$element['#markup'] .= "</div>"; /* #iching_form_blurb */
 	$element['#markup'] .= "<div class='sm_line'>";
-	$element['#markup'] .= "<img src='/sites/all/modules/tao_iching/imgs/" . $line . "_sm.png'>";
+	$element['#markup'] .= "<img src='/modules/tao_iching/imgs/" . $line . "_sm.png'>";
 	$element['#markup'] .= "</div>"; /* .sm_line */
 
 	return $element;
 }
 
 
-/**
- * Implements hook_form().
- */
-function tao_iching_form($form, &$form_state) {
 
-	$form['question'] = array(
-   		'#type' => 'textarea',
-   		'#title' => 'Ask A Question.',
-   		'#cols' => 10,
-   		'#resizable' => FALSE,
-   		'#rows' => 1,
-   	);
-
-  	$form['iching_box'] = array(
-   	 	'#type' => 'markup',
-    		'#prefix' => '<div id="iching_box">',
-    		'#suffix' => '</div>',
-    		'#markup' => "<div id='coin'><img src='/sites/all/modules/tao_iching/imgs/heads.png'><img src='/sites/all/modules/tao_iching/imgs/heads.png'><img src='/sites/all/modules/tao_iching/imgs/heads.png'></div><div id='iching_form_blurb'></div><div class='sm_line'></div>",
-  	);
-
-  	$form['submit_button'] = array(
-    		'#type' => 'submit',
-    		'#ajax' => array(
-      			'callback' => 'tao_iching_submit_callback',
-      			'wrapper' => 'iching_box',
-    		),
-    		'#value' => t('Toss The Coins'),
-		'#attributes' => array(
-			'class' => array(
-				'i-ching-submit'
-			),
-			'name' => array(
-				'i-ching-toss',
-			),
-		),
-  	);
-
-  	return $form;
-}
 
 
 /**
@@ -358,7 +344,7 @@ function tao_iching_view($callbackResult) {
 	     	foreach ($flippedInitial as $key => $value) {
 
 	     		$content .=  "<div class='min_line'>";
-	     		$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+	     		$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 	     		$content .=  "</div>";
 	    	}
 	   	$content .= "</div>";
@@ -369,7 +355,7 @@ function tao_iching_view($callbackResult) {
 		     	foreach ($flippedInitial as $key => $value) {
 
 		     		$content .=  "<div class='min_line'>";
-		     		$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+		     		$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 		     		$content .=  "</div>";
 		    	}
 	     	} else {
@@ -377,7 +363,7 @@ function tao_iching_view($callbackResult) {
 	      		foreach ($flippedChanged as $key => $value) {
 
 	       			$content .=  "<div class='min_line'>";
-	       			$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+	       			$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 	       			$content .=  "</div>";
 	      		}
 	     	}
@@ -419,7 +405,7 @@ function tao_iching_view($callbackResult) {
 
 	  	$content .= "<div class='iching_tab'>";
 		/* html to make our javascript work */
-	  	$content .= file_get_contents(drupal_get_path('module', 'tao_iching') . "/includes/result_html.php");
+	  	$content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/includes/result_html.php");
 	  	$content .= "</div>";
 
 	  	$content .= "<div id='Current' class='iching_tabcontent'>";
@@ -428,7 +414,7 @@ function tao_iching_view($callbackResult) {
 	     	$content .= "<div class='hexag'>";
 	      	foreach ($finalhex as $name) {
 	       		$content .= "<div class='sm_line'>";
-	       		$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
+	       		$content .= "<img src='/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
 	       		$content .= "</div>";
 	      	}
 	     	$content .= "</div>";
@@ -461,7 +447,7 @@ function tao_iching_view($callbackResult) {
 			$book_cng_key = $I_Ching->findTopChanging($flippedInitial);
 		 	foreach ($flippedInitial as $name) {
 		  		$content .= "<div class='sm_line'>";
-		  		$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
+		  		$content .= "<img src='/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
 		  		$content .= "</div>";
 		 	}
 	     		$content .= "</div>";
@@ -481,7 +467,7 @@ function tao_iching_view($callbackResult) {
 	     		$content .= "<div class='hexag'>";
 	       		foreach ($flippedChanged as $chgname) {
 				$content .= "<div class='sm_line'>";
-				$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname['line'] . "_sm.png'>";
+				$content .= "<img src='/modules/tao_iching/imgs/" . $chgname['line'] . "_sm.png'>";
 				$content .= "</div>";
 	       		}
 	      		$content .= "</div>";
@@ -511,7 +497,7 @@ function tao_iching_view($callbackResult) {
 	  	$content .= "document.getElementById('defaultOpen').click();";
 	  	$content .= "</SCRIPT>";
 		/* clear the session ID */
-		$_SESSION['TaoTeChingID'] = NULL; 	
+		$_SESSION['TaoTeChingID'] = NULL;
 
 	} else if ($callbackResult == "instant") { ##- INSTANT METHOD -##
 
@@ -531,7 +517,7 @@ function tao_iching_view($callbackResult) {
 	     	foreach ($flippedInitial as $key => $value) {
 
 	     		$content .=  "<div class='min_line'>";
-	     		$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+	     		$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 	     		$content .=  "</div>";
 	    	}
 	   	$content .= "</div>";
@@ -541,7 +527,7 @@ function tao_iching_view($callbackResult) {
 		     	foreach ($flippedInitial as $key => $value) {
 
 		     		$content .=  "<div class='min_line'>";
-		     		$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+		     		$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 		     		$content .=  "</div>";
 		    	}
 	     	} else {
@@ -549,7 +535,7 @@ function tao_iching_view($callbackResult) {
 	      		foreach ($flippedChanged as $key => $value) {
 
 	       			$content .=  "<div class='min_line'>";
-	       			$content .=  "<img src='/sites/all/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
+	       			$content .=  "<img src='/modules/tao_iching/imgs/" . $value['line'] . "_min.png'>";
 	       			$content .=  "</div>";
 	      		}
 	     	}
@@ -590,7 +576,7 @@ function tao_iching_view($callbackResult) {
 
 	  	$content .= "<div class='iching_tab'>";
 		/* html to make our javascript work */
-	  	$content .= file_get_contents(drupal_get_path('module', 'tao_iching') . "/includes/result_html.php");
+	  	$content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/includes/result_html.php");
 
 	  	$content .= "</div>";
 
@@ -601,7 +587,7 @@ function tao_iching_view($callbackResult) {
 	      	foreach ($finalhex as $name) {
 
 	       		$content .= "<div class='sm_line'>";
-	       		$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
+	       		$content .= "<img src='/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
 	       		$content .= "</div>";
 	      	}
 	     	$content .= "</div>";
@@ -635,7 +621,7 @@ function tao_iching_view($callbackResult) {
 		 	foreach ($flippedInitial as $name) {
 
 		  		$content .= "<div class='sm_line'>";
-		  		$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
+		  		$content .= "<img src='/modules/tao_iching/imgs/" . $name['line'] . "_sm.png'>";
 		  		$content .= "</div>";
 		 	}
 	     		$content .= "</div>";
@@ -657,7 +643,7 @@ function tao_iching_view($callbackResult) {
 	       		foreach ($flippedChanged as $chgname) {
 
 				$content .= "<div class='sm_line'>";
-				$content .= "<img src='/sites/all/modules/tao_iching/imgs/" . $chgname['line'] . "_sm.png'>";
+				$content .= "<img src='/modules/tao_iching/imgs/" . $chgname['line'] . "_sm.png'>";
 				$content .= "</div>";
 	       		}
 	      		$content .= "</div>";
@@ -708,54 +694,58 @@ function tao_iching_view($callbackResult) {
 /*
  *  /statistics
  */
-function tao_iching_stats() {
+#function tao_iching_stats() {
 
-	$I_Ching = new I_Ching();
-	$idArray = db_query('SELECT id FROM {tao_iching_readings}')->fetchAll();
-	$rdCount = count($idArray);
+#	$I_Ching = new I_Ching();
+#	$idArray = db_query('SELECT id FROM {tao_iching_readings}')->fetchAll();
+#	$rdCount = count($idArray);
 
-	$bookNameArray = array();
-	$bookArray = array();
+#	$bookNameArray = array();
+#	$bookArray = array();
 
-	foreach ($idArray as $key => $value) {
+#	foreach ($idArray as $key => $value) {
 		/* retrieve the first hexagram */
-		$localChing = $I_Ching->myIching($value->id);
+#		$localChing = $I_Ching->myIching($value->id);
 		/* flip the array because traditionally I-Ching is read bottom to top */
-		$flippedInitial = array_reverse($localChing['initial']);
+#		$flippedInitial = array_reverse($localChing['initial']);
 		/* get rid of the change indicators */
-		$finalhex = $I_Ching->rawhex_cleanup($flippedInitial);
+#		$finalhex = $I_Ching->rawhex_cleanup($flippedInitial);
 		/* get the book number for the hexagram */
-		$bookname = $I_Ching->findBooknum($finalhex);
+#		$bookname = $I_Ching->findBooknum($finalhex);
 		/* get the book from the first hexagram */
-		$origBook = $I_Ching->findBook($finalhex);
-		$bookArray[] = $origBook;
-		$needle = "<br>";
-		$bookNameArray[] = strstr($origBook['descr'], $needle, true);
-	}
-	$sortedNameArray = array_count_values($bookNameArray);
-	asort($sortedNameArray);
-	$graphNames = array();
-	$graphNums = array();
-	foreach ($sortedNameArray as $sKey => $sValue) {
+#		$origBook = $I_Ching->findBook($finalhex);
+#		$bookArray[] = $origBook;
+#		$needle = "<br>";
+#		$bookNameArray[] = strstr($origBook['descr'], $needle, true);
+#	}
+#	$sortedNameArray = array_count_values($bookNameArray);
+#	asort($sortedNameArray);
+#	$graphNames = array();
+#	$graphNums = array();
+#	foreach ($sortedNameArray as $sKey => $sValue) {
 
-		$graphNames[] = $sKey;
-		$graphNums[] = $sValue;
-	}
-	$reversedNames = array_reverse($graphNames);
-	$reversedNums = array_reverse($graphNums);
-	$finalNames = array_slice($reversedNames, 0, 10);
-	$finalNums = array_slice($reversedNums, 0, 10);
+#		$graphNames[] = $sKey;
+#		$graphNums[] = $sValue;
+#	}
+#	$reversedNames = array_reverse($graphNames);
+#	$reversedNums = array_reverse($graphNums);
+#	$finalNames = array_slice($reversedNames, 0, 10);
+#	$finalNums = array_slice($reversedNums, 0, 10);
 
-	$content = "<script>var valArray = " . json_encode($finalNums, TRUE) . ";</script>";
-	$content .= "<script>var labelArray = " . json_encode($finalNames, TRUE) . ";</script>";
-	$content .= "<h3>Top 10 Hexagrams</h3>";
-	$content .= "There are " . $rdCount . " readings in the database.<br>";
-	$content .= "<a href='/i-ching'><b>Cast the I-Ching.</b></a>";
-	$content .= '<div id="piechart"></div>';
+#	$content = "<script>var valArray = " . json_encode($finalNums, TRUE) . ";</script>";
+#	$content .= "<script>var labelArray = " . json_encode($finalNames, TRUE) . ";</script>";
+#	$content .= "<h3>Top 10 Hexagrams</h3>";
+#	$content .= "There are " . $rdCount . " readings in the database.<br>";
+#	$content .= "<a href='/i-ching'><b>Cast the I-Ching.</b></a>";
+#	$content .= '<div id="piechart"></div>';
 
-	return $content;
-}
+#	return $content;
+#}
 
+
+#################################
+### ADMIN section
+#################################
 
 /*
  * Implements hook_admin().
@@ -763,9 +753,13 @@ function tao_iching_stats() {
 function tao_iching_admin() {
 
 	global $user;
+  $config = config('tao_iching_admin.settings');
 	$idArray = db_query('SELECT id, timestamp FROM {tao_iching_readings}')->fetchAll();
-  	$form = array();
 	$readCount = count($idArray);
+
+  # $form = array();
+  $form['#config'] = 'tao_iching_admin.settings';
+
 	$form['readings'] = array(
 		'#type' => 'fieldset',
 		'#title' => t($readCount . ' Readings'),
@@ -776,14 +770,13 @@ function tao_iching_admin() {
 	foreach ($idArray as $key => $value) {
 
 		$convertedtime = date('d/m/Y h:i:s', $value->timestamp);
-
-	  	$form['readings']["'" . $value->timestamp . "'"] = array(
-	    		'#type' => 'checkbox',
-	    		'#title' => t("&nbsp;&nbsp;<a href='/result/" . $value->id . "' target='_new'>" . $user->name . " at " . $convertedtime) . "</a>",
-	    		'#default_value' => '0',
-	    		'#required' => FALSE,
-			'#attributes' => array('class' => array('ic1-class-1')),
-	  	);
+  	$form['readings']["'" . $value->timestamp . "'"] = array(
+    	'#type' => 'checkbox',
+    	'#title' => t("&nbsp;&nbsp;<a href='/result/" . $value->id . "' target='_new'>" . $user->name . " at " . $convertedtime) . "</a>",
+    	'#default_value' => 0,
+    	'#required' => FALSE,
+#      '#attributes' => array('class' => array('ic1-class-1')),
+  	);
 	}
 	$form['all'] = array(
 		'#type' => 'fieldset',
@@ -794,7 +787,7 @@ function tao_iching_admin() {
 	$form['all']['delete_all'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('Delete All Readings in the database.'),
-		'#default_value' => '0',
+		'#default_value' => 0,
 		'#required' => FALSE,
 	);
 	$form['database'] = array(
@@ -803,12 +796,11 @@ function tao_iching_admin() {
 		'#collapsible' => TRUE,
 		'#collapsed' => FALSE,
 	);
-	$form['database']['yesnocron'] = array(
+	$form['database']['hourly'] = array(
 		'#type' => 'checkbox',
 		'#title' => t('Delete readings after 1 hour. (default)'),
-		'#default_value' => variable_get('yesnocron', 1),
+		'#default_value' => $config->get('hourly'),
 		'#required' => FALSE,
-
 	);
 	$form['database']['selected'] = array(
 		'#type' => 'select',
@@ -823,11 +815,11 @@ function tao_iching_admin() {
 			'365' => t('1 year'),
 			'forever' => t('forever'),
 	),
-	'#default_value' => variable_get('selected', 'options'),
+	'#default_value' => $config->get('selected'),
 	'#description' => t('Set this to change the default storage setting.'),
  	'#states' => array(
-    		'visible' => array(
-      			':input[name="yesnocron"]' => array('checked' => FALSE),
+    'visible' => array(
+      ':input[name="hourly"]' => array('checked' => FALSE),
 			),
 		),
 	);
@@ -899,12 +891,10 @@ function tao_iching_rdngs_dlt() {
 	$I_Ching = new I_Ching();
 	$idArray = db_query('SELECT id, timestamp FROM {tao_iching_readings}')->fetchAll();
 	$arrayCount = count($idArray);
-
 	foreach ($idArray as $key => $value) {
-
 			$I_Ching->deleteReading($value->id);
 	}
-	drupal_set_message($arrayCount . " readings have been deleted.");
+	backdrop_set_message($arrayCount . " readings have been deleted.");
 }
 
 
@@ -955,11 +945,10 @@ function tao_iching_rdngs_gnrt($number) {
 		$execution_time = $time_end - $time_start;
 		if ($number != 0) {
 
-			drupal_set_message($number . " readings generated in " . round($execution_time, 2) . " seconds.");
+			backdrop_set_message($number . " readings generated in " . round($execution_time, 2) . " seconds.");
 		}
 	} else {
-
-		drupal_set_message("Number to generate must be 100 or less.");
+		backdrop_set_message("Number to generate must be 100 or less.");
 	}
 }
 
@@ -969,20 +958,21 @@ function tao_iching_rdngs_gnrt($number) {
  */
 function tao_iching_crn_tm() {
 
+  $config = config('tao_iching_admin.settings');
 	$currentTime = time();
 	$futureTime = "";
 	/* get the time of the oldest reading */
 	$tsArray = db_query('SELECT timestamp FROM {tao_iching_readings} order by timestamp ASC')->fetchAll();
-	if ($tsArray) { 
+	if ($tsArray) {
 
 		$oldest = $tsArray[0]->timestamp;
 	}
 	/* select value */
-	$savedValue = variable_get('selected', 'options');
+	$savedValue = $config->get('selected');
 	/* checkbox value */
-	$notSaveValue = variable_get('yesnocron', 1);
+	$notSaveValue = $config->get('hourly');
 	/* seconds in a day */
-	$setInterval = intval($savedValue) * 86400; 
+	$setInterval = intval($savedValue) * 86400;
 	/* set future expire time */
 	if ($tsArray) {
 
@@ -1041,4 +1031,88 @@ function tao_iching_crn_cln_db() {
 		}
 	}
 }
+
+/*
+ * Implements hook_autoload_info().
+ */
+function tao_iching_autoload_info() {
+  return array(
+    'I_Ching' => 'includes/tao_iching.inc',
+  );
+}
+
+
+/**
+ * Implements hook_theme_registry_alter().
+ * makes the theme registry aware of our module template(s)
+ */
+#function tao_iching_theme_registry_alter(&$theme_registry) {
+
+	/* Defined path to the current module. */
+#	$module_path = backdrop_get_path('module', 'tao_iching');
+
+	/* Find all .tpl.php files in this module's folder recursively. */
+#	$template_file_objects = backdrop_find_theme_templates($theme_registry, '.tpl.php', $module_path);
+
+	/* Iterate through all found template file objects. */
+#	foreach ($template_file_objects as $key => $template_file_object) {
+
+		/* If the template has not already been overridden by a theme. */
+#		if (!isset($theme_registry[$key]['theme path']) || !preg_match('#/themes/#', $theme_registry[$key]['theme path'])) {
+
+			/* Alter the theme path and template elements. */
+#			$theme_registry[$key]['theme path'] = $module_path;
+#			$theme_registry[$key] = array_merge($theme_registry[$key], $template_file_object);
+#			$theme_registry[$key]['type'] = 'module';
+#		}
+#	}
+#}
+
+
+/**
+ * Implements hook_form_alter().
+ */
+#function tao_iching_form_alter(&$form, &$form_state, $form_id) {
+
+#  	if ($form_id == 'tao_iching_form') {
+
+#   		$form['#theme'] = array('tao_iching_form');
+#  	}
+#}
+
+
+/**
+ * Implements hook_theme().
+ * a form template for the i-ching page
+ */
+#function tao_iching_theme($existing, $type, $theme, $path) {
+
+#	$items['tao_iching_form'] = array(
+#  		'render element' => 'form',
+#    		'template' => 'tao_iching-form',
+#    		'path' => '/templates',
+#  	);
+#  	return $items;
+#}
+
+
+/**
+ * Implements hook_preprocess_page().
+ * display the correct title
+ */
+#function tao_iching_preprocess_page(&$vars) {
+
+#	$currentpath = current_path();
+#	if (($currentpath == "i-ching") || ($currentpath == "result")) {
+
+#		backdrop_set_title('I-Ching, the Book of Changes');
+# 	}
+#}
+
+
+
+
+
+
+
 

@@ -72,7 +72,7 @@ jQuery(document).ready(function($) {
 });
 
 
-Drupal.ajax.prototype.beforeSubmit = function (form_values, element, options)
+Backdrop.ajax.prototype.beforeSubmit = function (form_values, element, options)
 {
 	var chk = document.getElementById('tao-iching-form');
    	if (chk) {

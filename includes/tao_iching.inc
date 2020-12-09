@@ -225,7 +225,6 @@ class I_Ching {
 	 * makes an ID and a timestamp
 	 */
 	public function makeID() {
-
 		$time = time();
 		$idReturn = array();
 		$idReturn['timestamp'] = $time;
@@ -233,6 +232,15 @@ class I_Ching {
 		return $idReturn;
 	}
 
+  public function id($string) {
+    $arr = explode("-", $string);
+    return $arr[0];
+  }
+
+  public function timestamp($string) {
+    $arr = explode("-", $string);
+    return $arr[1];
+  }
 
 	/**
 	 * checks if a unix timestamp is older than 1 hour

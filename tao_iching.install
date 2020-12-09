@@ -1,488 +1,252 @@
 <?php
-function tao_iching_update_7101() {
-
-	// rework to use varchar(4) for book_number
-	db_drop_index('hexagrams', 'book_number');
-	db_change_field('hexagrams', 'book_number', 'book_number', array(
-		'type' => 'varchar',
-		'length' => 4,
-		'not null' => TRUE,
-		'description' => 'Book Number',
-		), array('indexes' => array(
-		'book_number' => array('book_number'),
-		))
-	);
-
-	// rework the line1 through line6 cols to use varchar(8)
-	db_change_field('hexagrams', 'line1', 'line1', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line One',
-		)
-	);
-
-	db_change_field('hexagrams', 'line2', 'line2', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line Two',
-		)
-	);
-
-	db_change_field('hexagrams', 'line3', 'line3', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line Three',
-		)
-	);
-
-	db_change_field('hexagrams', 'line4', 'line4', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line Four',
-		)
-	);
-
-	db_change_field('hexagrams', 'line5', 'line5', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line Five',
-		)
-	);
-
-	db_change_field('hexagrams', 'line6', 'line6', array(
-		'type' => 'varchar',
-		'length' => 8,
-		'not null' => TRUE,
-		'description' => 'Line Six',
-		)
-	);
-
-	// change the table name to be less generic
-	db_rename_table('hexagrams', 'tao_iching_hexagrams');
-
-
-	//add new table for book data
-  	$schema['tao_iching_books'] = array(
-    		'description' => 'The 64 hexagram definitions and meanings.',
-    		'fields' => array(
-      			'number' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Book Number',
-      			),
-      			'descr' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Description',
-      			),
-      			'judge' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Judgement',
-      			),
-      			'image' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Image',
-      			),
-      			'line_one' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line One',
-      			),
-      			'line_two' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Two',
-      			),
-      			'line_three' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Three',
-      			),
-      			'line_four' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Four',
-      			),
-      			'line_five' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Five',
-      			),
-      			'line_six' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Six',
-      			),
-   		),
-   		'unique keys' => array(
-      			'number' => array('number'),
-    		),
-  	);
-
-	 db_create_table('tao_iching_books', $schema['tao_iching_books']);
-
-
-	// install our books database from a .sql dump
-   	$sql2 = file_get_contents(drupal_get_path('module', 'tao_iching') . '/includes/tao_iching_books.sql');
-   	$statements = preg_split('/[\n\r]+/', $sql2);
-   	$templine = '';
-    	foreach ($statements as $line) {
-		// Add this line to the current segment
-   		$templine .= $line;
-		// If it has a semicolon at the end, it's the end of the query
-     		if (substr(trim($line), -1, 1) == ';') {
-      			db_query($templine);
-			$templine = '';
-   		}
-  	}  
-
-
-	//add new table 'tao_iching_lines'
-  	$schema['tao_iching_lines'] = array(
-    		'description' => 'I-Ching lines generated from trigrams',
-    		'fields' => array(
-				'tid' => array(			
-				'type' => 'serial',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-				'description' => 'TID',
-		 	),
-      			'id' => array(
-				'type' => 'varchar',
-				'length' => 40,
-				'not null' => TRUE,
-				'description' => 'User Session ID',
-      			),
-      			'throw_num' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Throw Number',
-      			),
-      			'line' => array(
-				'type' => 'varchar',
-				'length' => 24,
-				'not null' => TRUE,
-				'description' => 'Line',
-      			),
-      			'tri_name' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Trigram Name',
-      			),
-      			'code' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Binary Trigram',
-      			),
-      			'coinsval' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Coinsval',
-      			),
-   		),
-   		'unique keys' => array(
-      			'tid' => array('tid'),
-    		),
-  	);
-
-	db_create_table('tao_iching_lines', $schema['tao_iching_lines']);
-
-
-	//add new table 'tao_iching_readings'
-  	$schema['tao_iching_readings'] = array(
-    		'description' => 'I-Ching Readings',
-    		'fields' => array(
-      			'id' => array(
-				'type' => 'varchar',
-				'length' => 40,
-				'not null' => TRUE,
-				'description' => 'User Session ID',
-      			),
-      			'question' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'The Question Asked',
-      			),
-      			'timestamp' => array(
-				'type' => 'varchar',
-				'length' => 24,
-				'not null' => TRUE,
-				'description' => 'Question Timestamp',
-      			),
-   		),
-   		'unique keys' => array(
-      			'id' => array('id'),
-    		),
-  	);
-
-	db_create_table('tao_iching_readings', $schema['tao_iching_readings']);
-}
-
-
-/**
- * Implements hook_install().
- */
-function tao_iching_install() {
-
-	// install our hexagrams database from a .sql dump
-   	$sql1 = file_get_contents(drupal_get_path('module', 'tao_iching') . '/includes/tao_iching_hexagrams.sql');
-   	$statements = preg_split('/[\n\r]+/', $sql1);
-   	$templine = '';
-    	foreach ($statements as $line) {
-		// Add this line to the current segment
-   		$templine .= $line;
-		// If it has a semicolon at the end, it's the end of the query
-     		if (substr(trim($line), -1, 1) == ';') {
-      			db_query($templine);
-			$templine = '';
-   		}
-  	} 
-
-	// install our books database from a .sql dump
-   	$sql2 = file_get_contents(drupal_get_path('module', 'tao_iching') . '/includes/tao_iching_books.sql');
-   	$statements = preg_split('/[\n\r]+/', $sql2);
-   	$templine = '';
-    	foreach ($statements as $line) {
-		// Add this line to the current segment
-   		$templine .= $line;
-		// If it has a semicolon at the end, it's the end of the query
-     		if (substr(trim($line), -1, 1) == ';') {
-      			db_query($templine);
-			$templine = '';
-   		}
-  	}   
-} 
-
-
-/**
- * Implements hook_uninstall().
- */
-function tao_iching_uninstall() {
-
-}
-
 
 /**
  * Implements hook_schema().
  */
 function tao_iching_schema() {
 
-  	$schema['tao_iching_hexagrams'] = array(
-    		'description' => 'The 64 hexagrams as binary objects.',
-    		'fields' => array(
-      			'book_number' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Book Number',
-      			),
-      			'line1' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line One',
-      			),
-      			'line2' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line Two',
-      			),
-      			'line3' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line Three',
-      			),
-      			'line4' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line Four',
-      			),
-      			'line5' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line Five',
-      			),
-      			'line6' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Line Six',
-      			),
-   		),
-   		'unique keys' => array(
-      			'book_number' => array('book_number'),
-    		),
-  	);
-  	$schema['tao_iching_books'] = array(
-    		'description' => 'The 64 hexagram definitions and meanings.',
-    		'fields' => array(
-      			'number' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Book Number',
-      			),
-      			'descr' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Description',
-      			),
-      			'judge' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Judgement',
-      			),
-      			'image' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Image',
-      			),
-      			'line_one' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line One',
-      			),
-      			'line_two' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Two',
-      			),
-      			'line_three' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Three',
-      			),
-      			'line_four' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Four',
-      			),
-      			'line_five' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Five',
-      			),
-      			'line_six' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'Line Six',
-      			),
-   		),
-   		'unique keys' => array(
-      			'number' => array('number'),
-    		),
-  	);
-  	$schema['tao_iching_lines'] = array(
-    		'description' => 'I-Ching lines generated from trigrams',
-    		'fields' => array(
-				'tid' => array(			
-				'type' => 'serial',
-				'unsigned' => TRUE,
-				'not null' => TRUE,
-				'description' => 'TID',
-		 	),
-      			'id' => array(
-				'type' => 'varchar',
-				'length' => 40,
-				'not null' => TRUE,
-				'description' => 'User Session ID',
-      			),
-      			'throw_num' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Throw Number',
-      			),
-      			'line' => array(
-				'type' => 'varchar',
-				'length' => 24,
-				'not null' => TRUE,
-				'description' => 'Line',
-      			),
-      			'tri_name' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Trigram Name',
-      			),
-      			'code' => array(
-				'type' => 'varchar',
-				'length' => 8,
-				'not null' => TRUE,
-				'description' => 'Binary Trigram',
-      			),
-      			'coinsval' => array(
-				'type' => 'varchar',
-				'length' => 4,
-				'not null' => TRUE,
-				'description' => 'Coinsval',
-      			),
-   		),
-   		'unique keys' => array(
-      			'tid' => array('tid'),
-    		),
-  	);
-  	$schema['tao_iching_readings'] = array(
-    		'description' => 'I-Ching Readings',
-    		'fields' => array(
-      			'id' => array(
-				'type' => 'varchar',
-				'length' => 40,
-				'not null' => TRUE,
-				'description' => 'User Session ID',
-      			),
-      			'question' => array(
-				'type' => 'text',
-				'size' => 'medium',
-				'not null' => FALSE,
-				'description' => 'The Question Asked',
-      			),
-      			'timestamp' => array(
-				'type' => 'varchar',
-				'length' => 24,
-				'not null' => TRUE,
-				'description' => 'Question Timestamp',
-      			),
-   		),
-   		'unique keys' => array(
-      			'id' => array('id'),
-    		),
-  	);
-  	return $schema;
+  $schema['tao_iching_hexagrams'] = array(
+    'description' => 'The 64 hexagrams as binary objects.',
+    'fields' => array(
+      'book_number' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
+        'description' => 'Book Number',
+      ),
+      'line1' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line One',
+      ),
+      'line2' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line Two',
+      ),
+      'line3' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line Three',
+      ),
+      'line4' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line Four',
+      ),
+      'line5' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line Five',
+      ),
+      'line6' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Line Six',
+      ),
+    ),
+    'unique keys' => array(
+    'book_number' => array('book_number'),
+    ),
+  );
+
+  $schema['tao_iching_books'] = array(
+    'description' => 'The 64 hexagram definitions and meanings.',
+    'fields' => array(
+      'number' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
+        'description' => 'Book Number',
+      ),
+      'descr' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Description',
+      ),
+      'judge' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Judgement',
+      ),
+      'image' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Image',
+      ),
+      'line_one' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line One',
+      ),
+      'line_two' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line Two',
+      ),
+      'line_three' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line Three',
+      ),
+      'line_four' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line Four',
+      ),
+      'line_five' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line Five',
+      ),
+      'line_six' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'Line Six',
+      ),
+    ),
+    'unique keys' => array(
+      'number' => array('number'),
+    ),
+  );
+
+  $schema['tao_iching_lines'] = array(
+    'description' => 'I-Ching lines generated from trigrams',
+    'fields' => array(
+      'tid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'TID',
+       ),
+      'id' => array(
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => TRUE,
+        'description' => 'User Session ID',
+      ),
+      'throw_num' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
+        'description' => 'Throw Number',
+      ),
+      'line' => array(
+        'type' => 'varchar',
+        'length' => 24,
+        'not null' => TRUE,
+        'description' => 'Line',
+      ),
+      'tri_name' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Trigram Name',
+      ),
+      'code' => array(
+        'type' => 'varchar',
+        'length' => 8,
+        'not null' => TRUE,
+        'description' => 'Binary Trigram',
+      ),
+      'coinsval' => array(
+        'type' => 'varchar',
+        'length' => 4,
+        'not null' => TRUE,
+        'description' => 'Coinsval',
+      ),
+    ),
+    'unique keys' => array(
+      'tid' => array('tid'),
+    ),
+  );
+
+  $schema['tao_iching_readings'] = array(
+    'description' => 'I-Ching Readings',
+    'fields' => array(
+      'id' => array(
+      'type' => 'varchar',
+      'length' => 40,
+      'not null' => TRUE,
+      'description' => 'User Session ID',
+      ),
+      'question' => array(
+        'type' => 'text',
+        'size' => 'medium',
+        'not null' => FALSE,
+        'description' => 'The Question Asked',
+      ),
+      'timestamp' => array(
+        'type' => 'varchar',
+        'length' => 24,
+        'not null' => TRUE,
+        'description' => 'Question Timestamp',
+      ),
+    ),
+    'unique keys' => array(
+      'id' => array('id'),
+    ),
+  );
+  return $schema;
 }
 
+/**
+ * Implements hook_install().
+ */
+function tao_iching_install() {
+  // install our hexagrams database from a .sql dump
+  $sql1 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/includes/tao_iching_hexagrams.sql');
+  $statements = preg_split('/[\n\r]+/', $sql1);
+  $templine = '';
+  foreach ($statements as $line) {
+    // Add this line to the current segment
+    $templine .= $line;
+    // If it has a semicolon at the end, it's the end of the query
+    if (substr(trim($line), -1, 1) == ';') {
+      db_query($templine);
+      $templine = '';
+    }
+  }
+  // install our books database from a .sql dump
+  $sql2 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/includes/tao_iching_books.sql');
+  $statements = preg_split('/[\n\r]+/', $sql2);
+  $templine = '';
+  foreach ($statements as $line) {
+    // Add this line to the current segment
+    $templine .= $line;
+    // If it has a semicolon at the end, it's the end of the query
+    if (substr(trim($line), -1, 1) == ';') {
+      db_query($templine);
+      $templine = '';
+    }
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function tao_iching_uninstall() {
+  // remove config
+  $config = config('tao_iching.settings');
+  $config->delete();
+  $bconfig = config('tao_iching_admin.settings');
+  $bconfig->delete();
+
+}
+// TODO The old hook_update_N functions cannot be applied to Backdrop.
+# function tao_iching_update_7101() { }

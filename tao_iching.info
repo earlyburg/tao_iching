@@ -1,9 +1,6 @@
-; $Id: tao_iching,v 1.4 09/01/2019 earlyburg
+type = module
 name = Tao I-Ching
-description = A module to allow the user to cast the I-Ching.
-core = 7.x
-files[] = includes/tao_iching.inc
-dependencies[] = colorbox:colorbox
-dependencies[] = ctools:ctools
-
-
+description = Allow the user to cast the I-Ching.
+package = Other
+configure = admin/config/neon
+backdrop = 1.x

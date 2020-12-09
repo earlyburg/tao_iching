@@ -1,6 +1,6 @@
 <div class='iching_content'>
 <?php
-$formOutput = drupal_render_children($form);
+$formOutput = backdrop_render_children($form);
 echo $formOutput;
 ?>
 </div> <!-- END iching_content -->
