@@ -1,5 +1,5 @@
 #coin img {
-   padding:2px;  
+   padding:2px;
 }
 
 .animate-coin {
@@ -16,32 +16,24 @@
   }
 }
 
-#piechart {
-   max-width:600px;
-   max-height:400px;
-}
-
-#tao-iching-admin .form-type-checkbox { 
+#tao-iching-admin .form-type-checkbox {
    max-width: 450px;
    display: inline-block;
    margin: 2px;
 }
 
 .iching_content {
-   float:left;
-   max-width:40%;
+
    display:block;
    margin-left:10px;
-   padding:5px;
+
 }
 
 .iching_container {
    vertical-align:top;
    overflow: hidden;
-   width: 50%; 
    display: inline-block;
-   padding: 10px 0px 0px 40px;
-   vertical-align: top;
+
 }
 
 #edit-question {
@@ -53,7 +45,7 @@
 }
 
 
-.line { 
+.line {
    height:52px;
 }
 
@@ -90,7 +82,7 @@
 
    max-width:380px;
 
-   height:20px; 
+   height:20px;
 }
 
 .iching_content .iching_blurb {
@@ -172,7 +164,7 @@
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-} 
+}
 
 .iching_tabcontent {
     animation: fadeEffect 1s; /* Fading effect takes 1 second */
@@ -243,7 +235,7 @@
 }
 
 
-@media screen and (max-width: 480px) { 
+@media screen and (max-width: 480px) {
 
  .iching_tab button {
 
@@ -262,7 +254,7 @@
     vertical-align: top;
    }
 
- .iching_container, 
+ .iching_container,
  .iching_content {
 
    min-width: 245px;

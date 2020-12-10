@@ -1,6 +1,7 @@
 type = module
 name = Tao I-Ching
 description = Allow the user to cast the I-Ching.
+dependencies[] = colorbox
 package = Other
-configure = admin/config/neon
+configure = admin/config/user-interface/tao_iching
 backdrop = 1.x

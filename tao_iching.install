@@ -4,7 +4,6 @@
  * Implements hook_schema().
  */
 function tao_iching_schema() {
-
   $schema['tao_iching_hexagrams'] = array(
     'description' => 'The 64 hexagrams as binary objects.',
     'fields' => array(
@@ -55,7 +54,6 @@ function tao_iching_schema() {
     'book_number' => array('book_number'),
     ),
   );
-
   $schema['tao_iching_books'] = array(
     'description' => 'The 64 hexagram definitions and meanings.',
     'fields' => array(
@@ -124,7 +122,6 @@ function tao_iching_schema() {
       'number' => array('number'),
     ),
   );
-
   $schema['tao_iching_lines'] = array(
     'description' => 'I-Ching lines generated from trigrams',
     'fields' => array(
@@ -175,7 +172,6 @@ function tao_iching_schema() {
       'tid' => array('tid'),
     ),
   );
-
   $schema['tao_iching_readings'] = array(
     'description' => 'I-Ching Readings',
     'fields' => array(
