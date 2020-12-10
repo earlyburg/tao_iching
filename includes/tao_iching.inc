@@ -183,7 +183,7 @@ class I_Ching {
    */
   public function rawhex_cleanup($raw) {
     $cleaned = array();
-      foreach($raw as $key => $value) {
+    foreach($raw as $key => $value) {
       switch ($value['line']) {
         case "yang_changing":
           $cleaned[$key]['line'] = "yang";
@@ -195,7 +195,7 @@ class I_Ching {
           $cleaned[$key]['line'] = $value['line'];
       }
     }
-       return $cleaned;
+    return $cleaned;
   }
 
 
@@ -237,12 +237,9 @@ class I_Ching {
       $newTimeString = time();
       $difference = $newTimeString - $timeString;
       $difference = $difference/60; // minutes
-      if ($difference >= 60) {
-        return TRUE;
-      } else {
-        return FALSE;
-      }
+      ($difference >= 60) ? $return = TRUE : $return = FALSE;
     }
+    return $return;
   }
 
 
@@ -250,14 +247,9 @@ class I_Ching {
    * inserts a trigram to the lines table
    */
   public function insertLine($id, $throw_num, $line, $tri_name, $code, $coinsval) {
-
-    $return = NULL;
-    $success = FALSE;
     if ( !empty($id) && !empty($throw_num) && !empty($line) && !empty($tri_name) && !empty($code) && !empty($coinsval) ) {
-
       if ( $this->readingExist($id) != FALSE ) {
-
-        $return = db_insert('tao_iching_lines')
+        $ret = db_insert('tao_iching_lines')
           ->fields(array(
           'id' => $id,
           'throw_num' => $throw_num,
@@ -267,16 +259,10 @@ class I_Ching {
           'coinsval' => $coinsval,
           ))
           ->execute();
-        ($return) ? $success = TRUE : $success = FALSE;
+        ($ret) ? $return = TRUE : $return = FALSE;
       }
     }
-    if ($success) {
-
-      return TRUE;
-    } else {
-
-      return FALSE;
-    }
+    return $return;
   }
 
 
@@ -284,17 +270,14 @@ class I_Ching {
    * checks if a reading exists
    */
   public function readingExist($id) {
-
-    $ret = FALSE;
     if ( !empty($id) ) {
-
       $ret = db_query('SELECT id FROM {tao_iching_readings}
         WHERE id = :id', array(
             ':id' => $id,
         ))->fetchField();
-      ($ret) ? $ret = TRUE : $ret = FALSE;
+      ($ret) ? $return = TRUE : $return = FALSE;
     }
-    return $ret;
+    return $return;
   }
 
 
@@ -302,22 +285,17 @@ class I_Ching {
    * deletes a reading from the database
    */
   public function deleteReading($id) {
-
     $return = FALSE;
     if ( !empty($id) ) {
-
       $num_lines_deleted = db_delete('tao_iching_lines')
         ->condition('id', $id)
         ->execute();
       ($num_lines_deleted) ? $linesRet = TRUE : $linesRet = FALSE;
-
       $num_readings_deleted = db_delete('tao_iching_readings')
         ->condition('id', $id)
         ->execute();
       ($num_readings_deleted) ? $readsRet = TRUE : $readsRet = FALSE;
-
       if ($linesRet != FALSE && $readsRet != FALSE) {
-
         $return = TRUE;
       }
     }
@@ -329,17 +307,14 @@ class I_Ching {
    * checks the number of lines in a reading
    */
   public function checkNumber($id) {
-
-    $ret = "";
     if ( !empty($id) ) {
-
       $count = db_query('SELECT id FROM {tao_iching_lines}
         WHERE id = :id', array(
             ':id' => $id,
           ))->rowCount();
-      ($count) ? $ret = $count : $ret = FALSE;
+      ($count) ? $return = $count : $return = FALSE;
     }
-    return $ret;
+    return $return;
   }
 
 
@@ -349,7 +324,6 @@ class I_Ching {
   public function readingInit($idArray, $question="") {
 
     if ( !empty($idArray) ) {
-
       $insert = db_insert('tao_iching_readings')
         ->fields(array(
         'id' => $idArray['id'],
@@ -366,11 +340,8 @@ class I_Ching {
    * returns the current I-Ching object
    */
   public function myIching($id) {
-
     if ( !empty($id) ) {
-
-      if ( $this->readingExist($id) != FALSE ) {
-
+      if ( $this->readingExist($id) ) {
         // get the readings table info
         $readingArray = db_query('SELECT question, timestamp FROM {tao_iching_readings}
           WHERE id = :id', array(
@@ -381,14 +352,10 @@ class I_Ching {
           WHERE id = :id', array(
             ':id' => $id
           ))->fetchAll();
-
         foreach($lines as $key => $value) {
-
           $this->iching['initial'][$key]['line'] = $value->line;
           foreach ($value as $arKey => $arVal) {
-
             if ($arKey != "line" && $arKey != "coinsval") {
-
               $arKeyBucket = $value->tri_name;
               $arValBucket = $arVal;
             }
@@ -407,7 +374,6 @@ class I_Ching {
    * returns the book contents when passed a hexagram array
    */
   public function findBook($hexagram) {
-
     $bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
       WHERE line1 = :line1
       AND line2 = :line2
@@ -435,7 +401,6 @@ class I_Ching {
    * returns the book number when passed a hexagram array
    */
   public function findBooknum($hexagram) {
-
     $bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
       WHERE line1 = :line1
       AND line2 = :line2
@@ -454,4 +419,4 @@ class I_Ching {
   }
 
 
-} // END class I_Ching
+}

@@ -1,5 +1,7 @@
 <?php
 
+backdrop_add_library('system', 'backdrop.ajax');
+
 /**
  * Implements hook_view().
  */

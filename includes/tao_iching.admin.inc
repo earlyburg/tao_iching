@@ -67,9 +67,9 @@
      '#default_value' => $config->get('selected'),
      '#description' => t('Set this to change the default storage setting.'),
      '#states' => array(
-     'visible' => array(
-       ':input[name="hourly"]' => array('checked' => FALSE),
-       ),
+       'visible' => array(
+         ':input[name="hourly"]' => array('checked' => FALSE),
+         ),
      ),
    );
    $form['generate'] = array(

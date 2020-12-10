@@ -34,3 +34,4 @@ function tao_iching_contents($settings) {
   $ret = backdrop_render($ichingForm);
   return $ret;
 }
+// TODO dont show this block on /result/* or /i-ching/* pages

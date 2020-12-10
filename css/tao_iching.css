@@ -74,7 +74,8 @@
 }
 
 .iching_coindiv img {
-
+  height:auto;
+  width:100%;
     padding:5px;
 }
 
