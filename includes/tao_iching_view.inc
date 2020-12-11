@@ -3,9 +3,9 @@
 backdrop_add_library('system', 'backdrop.ajax');
 
 /**
- * Implements hook_view().
+ * Display the final results.
  */
-function tao_iching_view($callbackResult) {
+function tao_iching_viewport($callbackResult) {
   $I_Ching = new I_Ching();
   if ($I_Ching->readingExist($callbackResult)) { ##- 6 CLICKS METHOD -##
     /* retreive the first hexagram */

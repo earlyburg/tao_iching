@@ -35,7 +35,7 @@ function tao_iching_menu() {
     'title' => 'I-Ching, the Book of Changes',
     'page arguments' => array(1),
     'description' => 'Cast your I-Ching, and read an interpretation.',
-    'page callback' => 'tao_iching_view',
+    'page callback' => 'tao_iching_viewport',
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
