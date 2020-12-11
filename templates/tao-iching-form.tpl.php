@@ -7,6 +7,7 @@ echo $formOutput;
 <div class="iching_container">
 
 <div class="intro_blurb">
+<a href="/statistics">Top Ten Hexagrams</a>.<br>
 This program uses the three coins method to produce hexagram lines.<br>
 The applicable changing lines are obtained through Master Yin's rules.<br>
 Toss the coins 6 times to obtain the reading, or get an <a href="/result/instant">instant reading</a>.

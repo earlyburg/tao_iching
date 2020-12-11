@@ -39,6 +39,13 @@ function tao_iching_menu() {
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['statistics'] = array(
+  'title' => 'I-Ching, the Book of Changes',
+  'description' => 'I-Ching Statistics',
+  'page callback' => 'tao_iching_stats',
+  'access callback' => TRUE,
+  'type' => MENU_NORMAL_ITEM,
+);
   $items['admin/config/user-interface/tao_iching'] = array(
     'title' => 'Tao I-Ching',
     'description' => 'Tao I-Ching Settings.',
@@ -134,6 +141,7 @@ backdrop_add_css(backdrop_get_path('module', 'tao_iching') . '/css/tao_iching.cs
  * Add Javascript
  */
 backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/js/tao_iching.js');
+backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/lib/plotly.js');
 
 /**
  * tao_iching_submit_callback()
@@ -280,6 +288,52 @@ function tao_iching_theme_registry_alter(&$theme_registry) {
       $theme_registry[$key]['type'] = 'module';
     }
   }
+}
+
+/**
+ *  /statistics
+ */
+function tao_iching_stats() {
+	$I_Ching = new I_Ching();
+	$idArray = db_query('SELECT id FROM {tao_iching_readings}')->fetchAll();
+	$rdCount = count($idArray);
+	$bookNameArray = array();
+	$bookArray = array();
+	foreach ($idArray as $key => $value) {
+		/* retrieve the first hexagram */
+		$localChing = $I_Ching->myIching($value->id);
+		/* flip the array because traditionally I-Ching is read bottom to top */
+		$flippedInitial = array_reverse($localChing['initial']);
+		/* get rid of the change indicators */
+		$finalhex = $I_Ching->rawhex_cleanup($flippedInitial);
+		/* get the book number for the hexagram */
+		$bookname = $I_Ching->findBooknum($finalhex);
+		/* get the book from the first hexagram */
+		$origBook = $I_Ching->findBook($finalhex);
+		$bookArray[] = $origBook;
+		$needle = "<br>";
+		$bookNameArray[] = strstr($origBook['descr'], $needle, true);
+	}
+	$sortedNameArray = array_count_values($bookNameArray);
+	asort($sortedNameArray);
+	$graphNames = array();
+	$graphNums = array();
+	foreach ($sortedNameArray as $sKey => $sValue) {
+
+		$graphNames[] = $sKey;
+		$graphNums[] = $sValue;
+	}
+	$reversedNames = array_reverse($graphNames);
+	$reversedNums = array_reverse($graphNums);
+	$finalNames = array_slice($reversedNames, 0, 10);
+	$finalNums = array_slice($reversedNums, 0, 10);
+	$content = "<script>var valArray = " . json_encode($finalNums, TRUE) . ";</script>";
+	$content .= "<script>var labelArray = " . json_encode($finalNames, TRUE) . ";</script>";
+	$content .= "<h3>Top 10 Hexagrams</h3>";
+	$content .= "There are " . $rdCount . " readings in the database.<br>";
+	$content .= "<a href='/i-ching'><b>Cast the I-Ching.</b></a>";
+	$content .= '<div id="piechart"></div>';
+	return $content;
 }
 
 /**

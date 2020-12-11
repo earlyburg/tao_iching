@@ -6,7 +6,6 @@ backdrop_add_library('system', 'backdrop.ajax');
  * Implements hook_view().
  */
 function tao_iching_view($callbackResult) {
-
   $I_Ching = new I_Ching();
   if ($I_Ching->readingExist($callbackResult)) { ##- 6 CLICKS METHOD -##
     /* retreive the first hexagram */
@@ -200,7 +199,7 @@ function tao_iching_view($callbackResult) {
     $chBook = $I_Ching->findBook($flippedChanged);
     }
     /* print the question */
-    if ($finalChing['question'] != NULL) {
+    if ($finalChing['question'] != NULL) {  // TODO not a form submit so never going to work
       $content .= "<div class='iching_blurb'>";
       $content .= "<b>";
       $content .= $finalChing['question'];
