@@ -1,7 +1,5 @@
 <?php
 
-backdrop_add_library('system', 'backdrop.ajax');
-
 /**
  * Display the final results.
  */

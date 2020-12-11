@@ -138,12 +138,6 @@ function tao_iching_cron() {
 backdrop_add_css(backdrop_get_path('module', 'tao_iching') . '/css/tao_iching.css', array('group' => CSS_DEFAULT, 'every_page' => FALSE));
 
 /**
- * Add Javascript
- */
-backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/js/tao_iching.js');
-backdrop_add_js(backdrop_get_path('module', 'tao_iching') . '/lib/plotly.js');
-
-/**
  * tao_iching_submit_callback()
  */
 function tao_iching_submit_callback($form, $form_state) {
