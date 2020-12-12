@@ -35,7 +35,7 @@ function tao_iching_menu() {
     'title' => 'I-Ching, the Book of Changes',
     'page arguments' => array(1),
     'description' => 'Cast your I-Ching, and read an interpretation.',
-    'page callback' => 'tao_iching_viewport',
+    'page callback' => 'tao_iching_viewpage',
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
@@ -184,7 +184,7 @@ function tao_iching_submit_callback($form, $form_state) {
     } else {
       $message = "An anonymous visitor asked the I-Ching: " . $form['question']['#value'];
     }
-    watchdog("Tao I-Ching", $message, $variables = array(), $severity = WATCHDOG_NOTICE, $link = NULL);
+    watchdog("Tao I-Ching", $message, $variables = array(), $severity = WATCHDOG_INFO, $link = NULL);
     $config->clear('sessionId');
     $config->clear('question');
     $config->save();

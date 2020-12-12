@@ -3,7 +3,7 @@
 /**
  * Display the final results.
  */
-function tao_iching_viewport($callbackResult) {
+function tao_iching_viewpage($callbackResult) {
   $I_Ching = new I_Ching();
   if ($I_Ching->readingExist($callbackResult)) { ##- 6 CLICKS METHOD -##
     /* retreive the first hexagram */
