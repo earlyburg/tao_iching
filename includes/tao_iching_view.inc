@@ -68,7 +68,7 @@ function tao_iching_viewpage($callbackResult) {
     $content .= "</div>";
     $content .= "<div class='iching_tab'>";
     /* html to make our javascript work */
-    $content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/includes/result_html.php");
+    $content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/lib/result_html.html");
     $content .= "</div>";
     $content .= "<div id='Current' class='iching_tabcontent'>";
     $content .= "<h3>Current</h3>"; /* CURRENT */
@@ -209,7 +209,7 @@ function tao_iching_viewpage($callbackResult) {
     $content .= "</div>";
     $content .= "<div class='iching_tab'>";
     /* html to make our javascript work */
-    $content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/includes/result_html.php");
+    $content .= file_get_contents(backdrop_get_path('module', 'tao_iching') . "/lib/result_html.html");
     $content .= "</div>";
     $content .= "<div id='Current' class='iching_tabcontent'>";
     $content .= "<h3>Current</h3>"; /* CURRENT */

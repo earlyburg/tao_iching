@@ -68,7 +68,9 @@ function tao_iching_reading($form, &$form_state) {
   $config = config('tao_iching.settings');
   $basePath = backdrop_get_path('module', 'tao_iching');
   $form = [];
-  $form['#config'] = 'tao_iching.settings';
+  $form['#attached']['js'] = array(
+    backdrop_get_path('module', 'tao_iching') . '/js/tao_iching_form.js',
+  );
   $form['question'] = array(
     '#type' => 'textarea',
     '#title' => 'Ask A Question.',
@@ -143,6 +145,7 @@ backdrop_add_css(backdrop_get_path('module', 'tao_iching') . '/css/tao_iching.cs
 function tao_iching_submit_callback($form, $form_state) {
   global $user;
   $I_Ching = new I_Ching();
+#  $cookie = new Cookie();
   $config = config('tao_iching.settings');
   $formValues = $form_state['values'];
   $id = [];
@@ -349,5 +352,6 @@ function tao_iching_theme($existing, $type, $theme, $path) {
 function tao_iching_autoload_info() {
   return array(
     'I_Ching' => 'includes/tao_iching.inc',
+    'Cookie' => 'includes/tao_iching.cookies.inc',
   );
 }

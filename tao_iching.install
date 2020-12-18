@@ -209,7 +209,7 @@ function tao_iching_schema() {
  */
 function tao_iching_install() {
   // install our hexagrams database from a .sql dump
-  $sql1 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/includes/tao_iching_hexagrams.sql');
+  $sql1 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/lib/tao_iching_hexagrams.sql');
   $statements = preg_split('/[\n\r]+/', $sql1);
   $templine = '';
   foreach ($statements as $line) {
@@ -222,7 +222,7 @@ function tao_iching_install() {
     }
   }
   // install our books database from a .sql dump
-  $sql2 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/includes/tao_iching_books.sql');
+  $sql2 = file_get_contents(backdrop_get_path('module', 'tao_iching') . '/lib/tao_iching_books.sql');
   $statements = preg_split('/[\n\r]+/', $sql2);
   $templine = '';
   foreach ($statements as $line) {

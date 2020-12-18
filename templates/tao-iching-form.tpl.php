@@ -1,12 +1,3 @@
-<script>
-Backdrop.ajax.prototype.beforeSubmit = function (form_values, element, options)
-{
-  var chk = document.getElementById('tao-iching-reading');
-  if (chk) {
-  coin.innerHTML = '<img class="heads animate-coin" src="/modules/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/modules/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/modules/tao_iching/imgs/heads.png"/>';
-  }
-};
-</script>
 <div class='iching_content'>
 <?php
 $formOutput = backdrop_render_children($form);
@@ -19,7 +10,7 @@ echo $formOutput;
 <a href="/statistics">Top Ten Hexagrams</a>.<br>
 This program uses the three coins method to produce hexagram lines.<br>
 The applicable changing lines are obtained through Master Yin's rules.<br>
-Toss the coins 6 times to obtain the reading, or get an <a href="/result/instant">instant reading</a>.
+Ask a question and toss the coins 6 times to obtain an answer from the universe, or get an <b><a href="/result/instant">instant reading</a></b>.
 
 </div>
 
