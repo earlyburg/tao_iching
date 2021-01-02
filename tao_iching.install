@@ -247,5 +247,5 @@ function tao_iching_uninstall() {
   $bconfig->delete();
 
 }
-// TODO The old hook_update_N functions cannot be applied to Backdrop.
-# function tao_iching_update_7101() { }
+
+

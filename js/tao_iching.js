@@ -39,12 +39,10 @@ jQuery(document).ready(function($) {
 });
 
 /**
- * Modify form values prior to form submission.
+ * Set variables for the chart display
  */
 jQuery(document).ready(function($)
 {
-  var coin = document.getElementById('coin');
-  /* Set variables for the chart display */
 	var PIECHART = document.getElementById('piechart');
  	if (PIECHART) {
 		var data = [{

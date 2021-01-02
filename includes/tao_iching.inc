@@ -251,12 +251,12 @@ class I_Ching {
       if ( $this->readingExist($id) != FALSE ) {
         $ret = db_insert('tao_iching_lines')
           ->fields(array(
-          'id' => $id,
-          'throw_num' => $throw_num,
-          'line' => $line,
-          'tri_name' => $tri_name,
-          'code' => $code,
-          'coinsval' => $coinsval,
+            'id' => $id,
+            'throw_num' => $throw_num,
+            'line' => $line,
+            'tri_name' => $tri_name,
+            'code' => $code,
+            'coinsval' => $coinsval,
           ))
           ->execute();
         ($ret) ? $return = TRUE : $return = FALSE;
@@ -269,14 +269,13 @@ class I_Ching {
   /**
    * checks if a reading exists
    */
-  public function readingExist($id) {
-    if ( !empty($id) ) {
-      $ret = db_query('SELECT id FROM {tao_iching_readings}
-        WHERE id = :id', array(
-            ':id' => $id,
-        ))->fetchField();
-      ($ret) ? $return = TRUE : $return = FALSE;
-    }
+  public function readingExist($id = NULL) {
+    $ret = db_select('tao_iching_readings', 'n')
+      ->fields('n', array('id'))
+      ->condition('n.id', $id)
+      ->execute()
+      ->fetchField();
+    ($ret) ? $return = TRUE : $return = FALSE;
     return $return;
   }
 
@@ -284,21 +283,14 @@ class I_Ching {
   /**
    * deletes a reading from the database
    */
-  public function deleteReading($id) {
-    $return = FALSE;
-    if ( !empty($id) ) {
-      $num_lines_deleted = db_delete('tao_iching_lines')
-        ->condition('id', $id)
-        ->execute();
-      ($num_lines_deleted) ? $linesRet = TRUE : $linesRet = FALSE;
-      $num_readings_deleted = db_delete('tao_iching_readings')
-        ->condition('id', $id)
-        ->execute();
-      ($num_readings_deleted) ? $readsRet = TRUE : $readsRet = FALSE;
-      if ($linesRet != FALSE && $readsRet != FALSE) {
-        $return = TRUE;
-      }
-    }
+  public function deleteReading($id = NULL) {
+    $lines_deleted = db_delete('tao_iching_lines')
+      ->condition('id', $id)
+      ->execute();
+    $readings_deleted = db_delete('tao_iching_readings')
+      ->condition('id', $id)
+      ->execute();
+    ($lines_deleted != FALSE && $readings_deleted != FALSE) ? $return = TRUE : $return = FALSE;
     return $return;
   }
 
@@ -306,14 +298,13 @@ class I_Ching {
   /**
    * checks the number of lines in a reading
    */
-  public function checkNumber($id) {
-    if ( !empty($id) ) {
-      $count = db_query('SELECT id FROM {tao_iching_lines}
-        WHERE id = :id', array(
-            ':id' => $id,
-          ))->rowCount();
-      ($count) ? $return = $count : $return = FALSE;
-    }
+  public function checkNumber($id = NULL) {
+    $count = db_select('tao_iching_lines', 'n')
+      ->fields('n', array('id'))
+      ->condition('n.id', $id)
+      ->execute()
+      ->rowCount();
+    ($count) ? $return = $count : $return = FALSE;
     return $return;
   }
 
@@ -326,9 +317,9 @@ class I_Ching {
     if ( !empty($idArray) ) {
       $insert = db_insert('tao_iching_readings')
         ->fields(array(
-        'id' => $idArray['id'],
-        'question' => $question,
-        'timestamp' => $idArray['timestamp'],
+          'id' => $idArray['id'],
+          'question' => $question,
+          'timestamp' => $idArray['timestamp'],
         ))
         ->execute();
       return $idArray['timestamp'];
@@ -339,61 +330,35 @@ class I_Ching {
   /**
    * returns the current I-Ching object
    */
-  public function myIching($id) {
-    if ( !empty($id) ) {
-      if ( $this->readingExist($id) ) {
-        // get the readings table info
-        $readingArray = db_query('SELECT question, timestamp FROM {tao_iching_readings}
-          WHERE id = :id', array(
-            ':id' => $id
-          ))->fetchAssoc();
-        // get the trigrams created
-        $lines = db_query('SELECT throw_num, line, tri_name, code, coinsval FROM {tao_iching_lines}
-          WHERE id = :id', array(
-            ':id' => $id
-          ))->fetchAll();
-        foreach($lines as $key => $value) {
-          $this->iching['initial'][$key]['line'] = $value->line;
-          foreach ($value as $arKey => $arVal) {
-            if ($arKey != "line" && $arKey != "coinsval") {
-              $arKeyBucket = $value->tri_name;
-              $arValBucket = $arVal;
-            }
+  public function myIching($id = NULL) {
+    if ( $this->readingExist($id) ) {
+      // get the question
+      $reading = db_select('tao_iching_readings', 'n')
+        ->fields('n', array('question'))
+        ->condition('n.id', $id)
+        ->execute()
+        ->fetchField();
+      // get the lines created
+      $lines = db_select('tao_iching_lines', 'n')
+        ->fields('n', array('throw_num', 'line', 'tri_name', 'code', 'coinsval'))
+        ->condition('n.id', $id)
+        ->execute()
+        ->fetchAll();
+
+      foreach($lines as $key => $value) {
+        $this->iching['initial'][$key]['line'] = $value->line;
+        foreach ($value as $arKey => $arVal) {
+          if ($arKey != "line" && $arKey != "coinsval") {
+            $arKeyBucket = $value->tri_name;
+            $arValBucket = $arVal;
           }
-          $this->iching['initial'][$key][$arKeyBucket] = $arValBucket;
-          $this->iching['initial'][$key]['coinsval'] = $value->coinsval;
         }
-        $this->iching['question'] = $readingArray['question'];
+        $this->iching['initial'][$key][$arKeyBucket] = $arValBucket;
+        $this->iching['initial'][$key]['coinsval'] = $value->coinsval;
       }
+        $this->iching['question'] = $reading['question'];
     }
     return $this->iching;
-  }
-
-
-  /**
-   * returns the book contents when passed a hexagram array
-   */
-  public function findBook($hexagram) {
-    $bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
-      WHERE line1 = :line1
-      AND line2 = :line2
-      AND line3 = :line3
-      AND line4 = :line4
-      AND line5 = :line5
-      AND line6 = :line6', array(
-          ':line1' => $hexagram[0]['line'],
-          ':line2' => $hexagram[1]['line'],
-          ':line3' => $hexagram[2]['line'],
-          ':line4' => $hexagram[3]['line'],
-          ':line5' => $hexagram[4]['line'],
-          ':line6' => $hexagram[5]['line'],
-      ))->fetchField();
-
-    $bookArray = db_query('SELECT descr, judge, image, line_one, line_two, line_three, line_four, line_five, line_six FROM {tao_iching_books}
-      WHERE number = :number', array(
-        ':number' => $bookNumber
-      ))->fetchAssoc();
-    return $bookArray;
   }
 
 
@@ -401,21 +366,49 @@ class I_Ching {
    * returns the book number when passed a hexagram array
    */
   public function findBooknum($hexagram) {
-    $bookNumber = db_query('SELECT book_number FROM {tao_iching_hexagrams}
-      WHERE line1 = :line1
-      AND line2 = :line2
-      AND line3 = :line3
-      AND line4 = :line4
-      AND line5 = :line5
-      AND line6 = :line6', array(
-          ':line1' => $hexagram[0]['line'],
-          ':line2' => $hexagram[1]['line'],
-          ':line3' => $hexagram[2]['line'],
-          ':line4' => $hexagram[3]['line'],
-          ':line5' => $hexagram[4]['line'],
-          ':line6' => $hexagram[5]['line'],
-      ))->fetchField();
-    return $bookNumber;
+    $bookNumber = db_select('tao_iching_hexagrams', 'n')
+      ->fields('n', array('book_number'))
+      ->condition('n.line1', $hexagram[0]['line'])
+      ->condition('n.line2', $hexagram[1]['line'])
+      ->condition('n.line3', $hexagram[2]['line'])
+      ->condition('n.line4', $hexagram[3]['line'])
+      ->condition('n.line5', $hexagram[4]['line'])
+      ->condition('n.line6', $hexagram[5]['line'])
+      ->execute()
+      ->fetchField();
+      return $bookNumber;
+  }
+
+
+  /**
+   * returns the book contents when passed a hexagram array
+   */
+  public function findBook($hexagram) {
+    $bookNumber = db_select('tao_iching_hexagrams', 'n')
+      ->fields('n', array('book_number'))
+      ->condition('n.line1', $hexagram[0]['line'])
+      ->condition('n.line2', $hexagram[1]['line'])
+      ->condition('n.line3', $hexagram[2]['line'])
+      ->condition('n.line4', $hexagram[3]['line'])
+      ->condition('n.line5', $hexagram[4]['line'])
+      ->condition('n.line6', $hexagram[5]['line'])
+      ->execute()
+      ->fetchField();
+    $bookArray = db_select('tao_iching_books', 'n')
+      ->fields('n', array(
+        'descr',
+        'judge',
+        'image',
+        'line_one',
+        'line_two',
+        'line_three',
+        'line_four',
+        'line_five',
+        'line_six'))
+      ->condition('n.number', $bookNumber)
+      ->execute()
+      ->fetchAssoc();
+    return $bookArray;
   }
 
 
