@@ -184,6 +184,12 @@ function tao_iching_schema() {
       'not null' => TRUE,
       'description' => 'User Session ID',
       ),
+      'user_name' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'User Name',
+      ),
       'question' => array(
         'type' => 'text',
         'size' => 'medium',

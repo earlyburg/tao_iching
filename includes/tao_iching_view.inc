@@ -145,9 +145,9 @@ function tao_iching_viewpage($callbackResult) {
     $content .= "<SCRIPT>";
     $content .= "document.getElementById('defaultOpen').click();";
     $content .= "</SCRIPT>";
-    /* clear the session ID */
-#    config_clear('tao_iching.settings', 'sessionId');
-  } else if ($callbackResult == "instant") { ##- INSTANT METHOD -##
+
+  }
+  else if ($callbackResult == "instant") { ##- INSTANT METHOD -##
     $hexagram = $I_Ching->hexagram();
     $finalChing = $I_Ching->complete($hexagram);
     $finalchg = $finalChing['changed'];
@@ -285,15 +285,12 @@ function tao_iching_viewpage($callbackResult) {
     $content .= "<SCRIPT>";
     $content .= "document.getElementById('defaultOpen').click();";
     $content .= "</SCRIPT>";
-    /* clear the session ID */
-#    config_clear('tao_iching.settings', 'sessionId');
-  } else {
+  }
+  else {
     $content = "<div class='iching_blurb'>";
     $content .= "Sorry, that I-Ching reading is not in our database.<br>";
     $content .= "<a href='/i-ching'><b>Click Here to start again.</b></a>";
     $content .= "</div>";
-    /* clear the session ID */
-#    config_clear('tao_iching.settings', 'sessionId');
   }
   return $content;
 }

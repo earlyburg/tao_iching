@@ -6,7 +6,7 @@
  function tao_iching_admin() {
    global $user;
    $config = config('tao_iching_admin.settings');
-   $idArray = db_query('SELECT id, timestamp FROM {tao_iching_readings}')->fetchAll();
+   $idArray = db_query('SELECT id, user_name, timestamp FROM {tao_iching_readings}')->fetchAll();
    $readCount = count($idArray);
    $form = array();
    $form['#config'] = 'tao_iching_admin.settings';
@@ -21,7 +21,7 @@
      $convertedtime = date('d/m/Y h:i:s', $value->timestamp);
      $form['readings']["'" . $value->timestamp . "'"] = array(
        '#type' => 'checkbox',
-       '#title' => t("&nbsp;&nbsp;<a href='/result/" . $value->id . "' target='_new'>" . $user->name . " at " . $convertedtime) . "</a>",
+       '#title' => t("&nbsp;&nbsp;<a href='/result/" . $value->id . "' target='_new'>" . $value->user_name . " at " . $convertedtime) . "</a>",
        '#default_value' => 0,
        '#required' => FALSE,
        '#attributes' => array('class' => array('ic1-class-1')),
@@ -140,6 +140,7 @@ function tao_iching_rdngs_dlt() {
  * @return = a $number of I-Ching readings
  */
 function tao_iching_rdngs_gnrt($number) {
+  global $user;
   if ($number != "" && $number <= 100) {
     $time_start = microtime(true);
     $I_Ching = new I_Ching();
@@ -151,7 +152,7 @@ function tao_iching_rdngs_gnrt($number) {
       $sessionId = $id['id'];
       /* initialize a reading */
       $question = "";
-      $I_Ching->readingInit($id, $question);
+      $I_Ching->readingInit($id, $user->name, $question);
       $i = 1;
       while($i < 7) {
         /* generate hexagram line */

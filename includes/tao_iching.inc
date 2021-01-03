@@ -200,7 +200,7 @@ class I_Ching {
 
 
   /**
-   * makes an ID and a timestamp
+   * makes an ID and a timestamp array
    */
   public function makeID() {
     $time = time();
@@ -221,11 +221,27 @@ class I_Ching {
 
 
   /**
-   * gets a timestamp string from a sessionId
+   * renders an ID array from an ID string
    */
-  public function timestamp($string) {
-    $arr = explode("-", $string);
-    return $arr[1];
+  public function renderId($idString) {
+    $idReturn = array();
+    $idReturn['timestamp'] = time();
+    $idReturn['id'] = $idString;
+    return $idReturn;
+  }
+
+
+  /**
+   * gets the users question associated with the reading id
+   */
+  public function fetchQuestion($idString) {
+    $question = db_select('tao_iching_readings', 'n')
+      ->fields('n', array('question'))
+      ->condition('n.id', $idString)
+      ->execute()
+      ->fetchField();
+      ($question) ? $return = $question : $return = FALSE;
+      return $return;
   }
 
 
@@ -312,12 +328,12 @@ class I_Ching {
   /**
    * initializes a reading
    */
-  public function readingInit($idArray, $question="") {
-
+  public function readingInit($idArray, $user_name = NULL, $question = '') {
     if ( !empty($idArray) ) {
       $insert = db_insert('tao_iching_readings')
         ->fields(array(
           'id' => $idArray['id'],
+          'user_name' => $user_name,
           'question' => $question,
           'timestamp' => $idArray['timestamp'],
         ))
@@ -333,7 +349,7 @@ class I_Ching {
   public function myIching($id = NULL) {
     if ( $this->readingExist($id) ) {
       // get the question
-      $reading = db_select('tao_iching_readings', 'n')
+      $question = db_select('tao_iching_readings', 'n')
         ->fields('n', array('question'))
         ->condition('n.id', $id)
         ->execute()
@@ -356,7 +372,7 @@ class I_Ching {
         $this->iching['initial'][$key][$arKeyBucket] = $arValBucket;
         $this->iching['initial'][$key]['coinsval'] = $value->coinsval;
       }
-        $this->iching['question'] = $reading['question'];
+      ($question) ? $this->iching['question'] = $question : $this->iching['question'] = "";
     }
     return $this->iching;
   }
