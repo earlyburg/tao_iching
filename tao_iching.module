@@ -109,6 +109,7 @@ function tao_iching_reading($form, &$form_state) {
  * Implements hook_cron()
  */
 function tao_iching_cron() {
+    /* remove readings whose storage life is expired */
   if ( tao_iching_crn_tm() ) {
     $I_Ching = new I_Ching();
     $idArray = db_query('SELECT id, timestamp FROM {tao_iching_readings}')->fetchAll();
@@ -118,7 +119,11 @@ function tao_iching_cron() {
       }
     }
   }
+  /* clean any broken readings from database */
   tao_iching_crn_cln_db();
+  /* get rid of old session IDs */
+  $config = config('tao_iching.settings');
+  $config->delete();
 }
 
 /**
