@@ -1,0 +1,3 @@
+# associate Backdrop specific file types with their corresponding languages
+*.module linguist-language=PHP
+*.install linguist-language=PHP
