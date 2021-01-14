@@ -18,7 +18,7 @@
      '#collapsed' => TRUE,
    );
    foreach ($idArray as $key => $value) {
-     $convertedtime = date('d/m/Y h:i:s', $value->timestamp);
+     $convertedtime = date('m/d/Y h:i:s', $value->timestamp);
      $form['readings']["'" . $value->timestamp . "'"] = array(
        '#type' => 'checkbox',
        '#title' => t("&nbsp;&nbsp;<a href='/result/" . $value->id . "' target='_new'>" . $value->user_name . " at " . $convertedtime) . "</a>",
