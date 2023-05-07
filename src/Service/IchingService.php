@@ -5,9 +5,11 @@
  */
 namespace Drupal\tao_iching\Service;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  *
@@ -93,8 +95,8 @@ class IchingService {
   /**
    * @param ContainerInterface $container
    * @return static
-   * @throws \Psr\Container\ContainerExceptionInterface
-   * @throws \Psr\Container\NotFoundExceptionInterface
+   * @throws ContainerExceptionInterface
+   * @throws NotFoundExceptionInterface
    *
    */
   public static function create(ContainerInterface $container) {
@@ -103,8 +105,6 @@ class IchingService {
       $container->get('entity_type.manager'),
     );
   }
-
-
 
   /**
    * generates i-ching lines

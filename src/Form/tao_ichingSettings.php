@@ -12,6 +12,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\tao_iching\Service\IchingService;
 use Psr\Container\ContainerInterface;
 
@@ -36,6 +37,13 @@ class tao_ichingSettings extends ConfigFormBase {
   protected IchingService $iChing;
 
   /**
+   * Messenger service.
+   *
+   * @var LoggerChannelFactory $logger_factory
+   */
+  protected $loggerFactory;
+
+  /**
    * Config settings.
    *
    * @var string
@@ -45,9 +53,11 @@ class tao_ichingSettings extends ConfigFormBase {
   public function __construct(
     Connection $connection,
     IchingService $iChingService,
+    LoggerChannelFactory $logger_factory,
     ConfigFactoryInterface $config_factory) {
     $this->database = $connection;
     $this->iChing = $iChingService;
+    $this->loggerFactory = $logger_factory;
     parent::__construct($config_factory);
   }
 
@@ -55,6 +65,7 @@ class tao_ichingSettings extends ConfigFormBase {
     return new static(
       $container->get('database'),
       $container->get('tao_iching.service'),
+      $container->get('logger.factory'),
       $container->get('config.factory'),
     );
   }
@@ -220,7 +231,8 @@ class tao_ichingSettings extends ConfigFormBase {
         try {
           $this->iChing->createTaoPageNode($taoArray);
         } catch (InvalidPluginDefinitionException|EntityStorageException|PluginNotFoundException $e) {
-          dsm($e);
+          $this->loggerFactory->get('tao_iching')
+            ->error('Function createTaoPageNode() returned - '. $e);
         }
       }
     }
