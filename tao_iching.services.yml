@@ -1,0 +1,9 @@
+services:
+  tao_iching.service:
+    class: Drupal\tao_iching\Service\IchingService
+    arguments: ['@database', '@entity_type.manager']
+  taocookie.service:
+    class: Drupal\tao_iching\Service\TaocookieService
+    arguments: ['@request_stack']
+    tags:
+      - { name: 'event_subscriber' }

@@ -1,0 +1,8 @@
+tao_iching.library:
+  version: 1.x
+  css:
+    base:
+      css/tao_iching.css: {}
+  js:
+    js/tao_iching.js: {}
+

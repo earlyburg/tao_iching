@@ -1,0 +1,15 @@
+# node.type.tao_page.yml
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - tao_iching
+name: 'Tao Page'
+type: tao_page
+description: 'Content type that is used to display Tao Te Ching pages</em>'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true
+

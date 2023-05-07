@@ -1,0 +1,139 @@
+<?php
+/**
+ * @file
+ * Module file for the tao_iching module.
+ */
+
+use Drupal\Core\Form\FormStateInterface;
+
+function tao_iching_theme($existing, $type, $theme, $path) {
+  $variables = [
+    'form__tao_iching_form' => [
+      'render element' => 'children',
+      'template' => 'form--tao-iching-form',
+    ],
+    'block__i_ching_block' => [
+      'variables' => [
+        'iching' => NULL,
+      ],
+      'template' => 'block--i-ching-block',
+    ],
+  ];
+  return $variables;
+}
+
+/**
+ * Implements hook_cron()
+ */
+function tao_iching_cron() {
+  /* remove readings whose storage life is expired */
+    $I_Ching = \Drupal::service('tao_iching.service');
+    $database = \Drupal::database();
+    $idArray = $database->select('tao_iching_readings', 'n')
+      ->fields('n', ['id', 'timestamp'])
+      ->execute()
+      ->fetchAll();
+    foreach ($idArray as $value) {
+      if ($I_Ching->checkTimestamp($value->timestamp)) {
+        $I_Ching->deleteReading($value->id);
+      }
+    }
+  /* clean any broken readings from database */
+  $I_Ching->cleanIchingDb();
+}
+
+/**
+ * Implements hook_form_alter
+ * attach css and javascript files
+ */
+function tao_iching_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'tao_iching_form') {
+    $form['#attached']['library'][] = 'tao_iching/tao_iching.library';
+    $form['#theme'] = 'form__tao_iching_form';
+  }
+  if($form_id == 'tao_iching_settings_form') {
+    $form['#attached']['library'][] = 'tao_iching/tao_iching.library';
+  }
+}
+
+/**
+ * @return mixed
+ *
+ */
+function tao_iching_create_reading() {
+  $user = \Drupal::currentUser();
+  $I_Ching = \Drupal::service('tao_iching.service');
+  $id = $I_Ching->makeID();
+  $sessionId = $id['id'];
+  $question = "A general reading please.";
+  $I_Ching->readingInit($id, $user->getDisplayName(), $question);
+  $i = 1;
+  while ($i < 7) {
+    /* generate hexagram line */
+    $user_click = $I_Ching->line();
+    foreach ($user_click as $key => $value) {
+      if ($key != "line" && $key != "coinsval") {
+        $keyBucket = $key;
+        $valBucket = $value;
+      }
+    }
+    $line = $user_click['line'];
+    $tri_name = $keyBucket;
+    $code = $valBucket;
+    $coinsval = $user_click['coinsval'];
+
+    $I_Ching->insertLine($sessionId, $i, $line, $tri_name, $code, $coinsval);
+    $i++;
+  }
+  sleep(2);
+  return $id['id'];
+}
+
+/**
+ * @param $success
+ * @param $results
+ * @param $operations
+ * @return void
+ *
+ */
+function tao_iching_create_finished($success, $results, $operations) {
+  if ($success) {
+    $message = t('Reading creation completed successfully.');
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  \Drupal::messenger()->addStatus($message);
+}
+
+
+/**
+ * Implements hook_theme_suggestions_alter().
+ */
+function tao_iching_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
+#dsm($hook);
+  if ($hook == 'form' & !empty($variables['element']['#theme'])) {
+    $suggestions[] = 'form__' . $variables['element']['#theme'][0];
+  }
+  if ($hook == 'region' & !empty($variables['element']['#theme'])) {
+    $suggestions[] = 'region__' . $variables['element']['#theme'][0];
+  }
+
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+    $suggestions[] = 'page__' . $node->bundle();
+  }
+
+}
+
+/**
+ * @param array $suggestions
+ * @param array $variables
+ * Implements hook_theme_suggestons_block_alter()
+ */
+function tao_iching_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  $content = $variables['elements']['content'];
+  if (isset($content['#block_content']) && $content['#block_content'] instanceof Drupal\block_content\BlockContentInterface) {
+    $suggestions[] = 'block__' . $content['#block_content']->bundle();
+  }
+}
+
