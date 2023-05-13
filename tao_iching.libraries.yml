@@ -5,4 +5,6 @@ tao_iching.library:
       css/tao_iching.css: {}
   js:
     js/tao_iching.js: {}
-
+  dependencies:
+    - core/jquery
+    - core/drupal
