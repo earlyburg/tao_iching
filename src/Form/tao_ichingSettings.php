@@ -234,7 +234,6 @@ class tao_ichingSettings extends ConfigFormBase {
           $this->loggerFactory->get('tao_iching')
             ->error('Function createTaoPageNode() returned - '. $e);
         }
-
       }
     }
 
