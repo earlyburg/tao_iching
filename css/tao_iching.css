@@ -12,6 +12,12 @@
   }
 }
 
+#coin {
+  display: flex;
+  align-items: left;
+  justify-content: left;
+}
+
 #coin img {
   padding:2px;
 }
