@@ -66,7 +66,7 @@ class TaoIchingSettings extends ConfigFormBase {
   /**
    * @param \Psr\Container\ContainerInterface $container
    *
-   * @return \Drupal\Core\Form\ConfigFormBase|\Drupal\tao_iching\Form\tao_ichingSettings|static
+   * @return \Drupal\Core\Form\ConfigFormBase|\Drupal\tao_iching\Form\TaoIchingSettings|static
    * @throws \Psr\Container\ContainerExceptionInterface
    * @throws \Psr\Container\NotFoundExceptionInterface
    */

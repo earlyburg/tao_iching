@@ -122,9 +122,10 @@ class TaoIchingForm extends FormBase {
 
   /**
    * @param array $form
-   * @param FormStateInterface $form_state
-   * @return array
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
+   * @return array
+   * @throws \Exception
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $localImagePath = '/'.$this->localPath->getPath('module', 'tao_iching').'/imgs';
@@ -188,9 +189,10 @@ class TaoIchingForm extends FormBase {
 
   /**
    * @param array $form
-   * @param FormStateInterface $form_state
-   * @return mixed|void
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
+   * @return \Drupal\Core\Ajax\AjaxResponse|mixed
+   * @throws \Exception
    */
   public function tao_iching_submit_callback(array $form, FormStateInterface $form_state) {
     ($this->account->getDisplayName()) ? $uname = $this->account->getDisplayName() : $uname = 'Anonymous';
