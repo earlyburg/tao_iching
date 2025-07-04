@@ -11,7 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 /**
- *
+ * The IchingService service.
  */
 class IchingService {
 
@@ -65,17 +65,17 @@ class IchingService {
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  private ConfigFactoryInterface $config;
+  protected ConfigFactoryInterface $config;
 
   /**
-   * @var Connection $connection
+   * @var \Drupal\Core\Database\Connection
    */
   protected Connection $database;
 
   /**
    * The entity type manager.
    *
-   * @var EntityTypeManagerInterface $entity_manager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
 
@@ -88,7 +88,7 @@ class IchingService {
 
 
   /**
-   * @param Connection $connection
+   * @param \Drupal\Core\Database\Connection $connection
    *   The database connection service.
    * @param EntityTypeManagerInterface $entity_manager
    *   The entity type manager service.
@@ -136,13 +136,15 @@ class IchingService {
   }
 
   /**
-   * generates i-ching lines
+   * @return array
    */
   public function line() {
-    $toss = array();
-    $return_vals = array();
+    $toss = [];
+    $returnVals = [];
     $name = "";
     $code = "";
+    $val = 0;
+    $line = "";
     // toss three coins, get the result (heads = 1, tails = 0)
     for ($k = 0 ; $k < 3; $k++) {
       $toss[] = rand(0, 1);
@@ -183,11 +185,11 @@ class IchingService {
         break;
     }
     // check for changing lines
-    if ($toss === $this->qian) {
+    if ($toss == $this->qian) {
       $val = 9;
       $line = "yang_changing";
     }
-    if ($toss === $this->kun) {
+    if ($toss == $this->kun) {
       $val = 6;
       $line = "yin_changing";
     }
@@ -201,18 +203,18 @@ class IchingService {
       $val = 7;
       $line = "yang";
     }
-    $return_vals['line'] = $line;
-    $return_vals[$name] = $code;
-    $return_vals['coinsval'] = $val;
-    return $return_vals;
+    $returnVals['line'] = $line;
+    $returnVals[$name] = $code;
+    $returnVals['coinsval'] = $val;
+    return $returnVals;
   }
 
   /**
-   * generates one complete hexagram
+   * @return array
    */
   public function hexagram() {
     $i = 0;
-    $hexagram = array();
+    $hexagram = [];
     while($i < 6) {
       $hexagram[] = $this->line();
       $i++;
@@ -221,11 +223,13 @@ class IchingService {
   }
 
   /**
-   * generates complete i-ching
+   * @param $hexagram
+   *
+   * @return array
    */
   public function complete($hexagram) {
     $i = 0;
-    $changedBucket = array();
+    $changedBucket = [];
     while ($i < 6) {
       $lineValKey = key($hexagram[$i]);
       $lineVal = $hexagram[$i][$lineValKey];
@@ -252,9 +256,12 @@ class IchingService {
   }
 
   /**
-   * returns an array containing the numeric positions of the changed lines
+   * @param $rawhex
+   *
+   * @return array
    */
   public function findTopChanging($rawhex) {
+    $linePos = '';
     $lineBucket = [];
     foreach ($rawhex as $key => $value) {
       $lineBucket[$key] = $value['line'];
@@ -267,25 +274,25 @@ class IchingService {
     foreach($integrated as $lineVal) {
       switch ($lineVal) {
         case "0":
-          $line_pos = "six";
+          $linePos = "six";
           break;
         case "1":
-          $line_pos = "five";
+          $linePos = "five";
           break;
         case "2":
-          $line_pos = "four";
+          $linePos = "four";
           break;
         case "3":
-          $line_pos = "three";
+          $linePos = "three";
           break;
         case "4":
-          $line_pos = "two";
+          $linePos = "two";
           break;
         case "5":
-          $line_pos = "one";
+          $linePos = "one";
           break;
       }
-      $changedArray[] = "line_" . $line_pos;
+      $changedArray[] = "line_" . $linePos;
     }
     return $changedArray;
   }
@@ -295,7 +302,7 @@ class IchingService {
    * @return array $cleaned
    *
    */
-  public function rawhex_cleanup($raw) {
+  public function rawhexCleanup($raw) {
     $cleaned = [];
     foreach($raw as $key => $value) {
       switch ($value['line']) {
@@ -317,7 +324,7 @@ class IchingService {
    */
   public function makeID() {
     $time = time();
-    $idReturn = array();
+    $idReturn = [];
     $idReturn['timestamp'] = $time;
     $idReturn['id'] = hash("md5", $time);
     return $idReturn;
@@ -332,7 +339,7 @@ class IchingService {
   }
 
   /**
-   * @param $string
+   * @param string $sessionIdString
    * @return false|string
    *
    * gets an ID string from a sessionId string
@@ -348,14 +355,16 @@ class IchingService {
   }
 
   /**
+   * /**
    * @param $timestamp
-   * @return false|mixed
    *
+   * @return false|mixed
+   * @throws \Exception
    */
   public function getReadingIdFromTimestamp($timestamp) {
     $idString = $this->database->select('tao_iching_readings', 'n')
       ->fields('n', ['id'])
-      ->condition('n.timestamp', $timestamp, '=')
+      ->condition('n.timestamp', $timestamp)
       ->execute()
       ->fetchField();
     ($idString) ? $return = $idString : $return = FALSE;
@@ -376,12 +385,15 @@ class IchingService {
   }
 
   /**
-   * gets the users question associated with the reading id
+   * @param $idString
+   *
+   * @return mixed|string
+   * @throws \Exception
    */
   public function fetchQuestion($idString) {
     $question = $this->database->select('tao_iching_readings', 'n')
       ->fields('n', ['question'])
-      ->condition('n.id', $idString, '=')
+      ->condition('n.id', $idString)
       ->execute()
       ->fetchField();
     ($question) ? $return = $question : $return = '';
@@ -389,21 +401,30 @@ class IchingService {
   }
 
   /**
-   * checks if a unix timestamp is older than our storage time limit
+   * @param $timeStamp
+   *
+   * @return bool
    */
   public function checkTimestamp($timeStamp) {
     $currentTime = time();
     $lifespanValue = $this->config->get('tao_iching.adminsettings')->get('lifespan');
-    /* seconds in a day */
+    // seconds in a day.
     $setInterval = intval($lifespanValue) * 86400;
-    /* set future expire time */
+    // set future expire time.
     $futureTime = intval($timeStamp) + intval($setInterval);
-    $return = ($currentTime > $futureTime) ? TRUE : FALSE;
-    return $return;
+    return ($currentTime > $futureTime) ? TRUE : FALSE;
   }
 
   /**
-   * inserts a trigram to the lines table
+   * @param $readingId
+   * @param $throw_num
+   * @param $line
+   * @param $tri_name
+   * @param $code
+   * @param $coinsval
+   *
+   * @return bool
+   * @throws \Exception
    */
   public function insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval) {
     $return = FALSE;
@@ -431,15 +452,15 @@ class IchingService {
   }
 
   /**
-   * @param $id
-   * @return mixed
+   * @param string $id
    *
-   * Checks if a reading exists
+   * @return bool
+   * @throws \Exception
    */
   public function readingExist($id) {
     $readingId = $this->database->select('tao_iching_readings', 'n')
       ->fields('n', ['id'])
-      ->condition('n.id', $id, '=')
+      ->condition('n.id', $id)
       ->execute()
       ->fetchField();
     ($readingId !== FALSE) ? $return = TRUE : $return = FALSE;
@@ -447,23 +468,25 @@ class IchingService {
   }
 
   /**
-   * deletes a reading from the database
+   * @param string $id
+   *
+   * @return bool
+   * @throws \Exception
    */
   public function deleteReading($id) {
     $lines_deleted = $this->database->delete('tao_iching_lines')
-      ->condition('id', $id, '=')
+      ->condition('id', $id)
       ->execute();
     $readings_deleted = $this->database->delete('tao_iching_readings')
-      ->condition('id', $id, '=')
+      ->condition('id', $id)
       ->execute();
-    ($lines_deleted != FALSE && $readings_deleted != FALSE) ? $return = TRUE : $return = FALSE;
+    ($lines_deleted && $readings_deleted) ? $return = TRUE : $return = FALSE;
     return $return;
   }
 
   /**
    * @return void
-   *
-   * deletes all the readings from the database
+   * @throws \Exception
    */
   public function deleteAllReadings() {
     $idArray = $this->database->select('tao_iching_readings', 'n')
@@ -478,12 +501,14 @@ class IchingService {
   }
 
   /**
-   * checks the number of lines in a reading
+   * @param string $id
+   *
+   * @return false|mixed
    */
   public function checkNumber($id) {
     $count = $this->database->select('tao_iching_lines', 'n')
       ->fields('n', array('id'))
-      ->condition('n.id', $id, '=')
+      ->condition('n.id', $id)
       ->countQuery()
       ->execute()
       ->fetchField();
@@ -492,7 +517,12 @@ class IchingService {
   }
 
   /**
-   * initializes a reading
+   * @param array $idArray
+   * @param string $user_name
+   * @param string $question
+   *
+   * @return false|mixed
+   * @throws \Exception
    */
   public function readingInit($idArray, $user_name = NULL, $question = '') {
     $return = FALSE;
@@ -511,19 +541,24 @@ class IchingService {
   }
 
   /**
-   * returns the current I-Ching object
+   * @param $id
+   *
+   * @return array
+   * @throws \Exception
    */
   public function myIching($id) {
+    $arKeyBucket = '';
+    $arValBucket = '';
     if ($this->readingExist($id)) {
       // get the question
       $qQuery = $this->database->select('tao_iching_readings', 'n');
       $qQuery->fields('n', array('question'));
-      $qQuery->condition('n.id', $id, '=');
+      $qQuery->condition('n.id', $id);
       $question = $qQuery->execute()->fetchField();
       // get the lines created
       $query = $this->database->select('tao_iching_lines', 'n');
       $query->fields('n', array('throw_num', 'line', 'tri_name', 'code', 'coinsval'));
-      $query->condition('n.id', $id, '=');
+      $query->condition('n.id', $id);
       $lines = $query->execute()->fetchAll();
       foreach($lines as $key => $value) {
         $this->iching['initial'][$key]['line'] = $value->line;
@@ -543,20 +578,19 @@ class IchingService {
 
   /**
    * @param $hexagram
+   *
    * @return mixed
-   *
-   *
-   * returns the book number when passed a hexagram array
+   * @throws \Exception
    */
   public function findBooknum($hexagram) {
     $query = $this->database->select('tao_iching_hexagrams', 'n');
     $query->addField('n', 'book_number');
-    $query->condition('n.line1', $hexagram[0]['line'], '=');
-    $query->condition('n.line2', $hexagram[1]['line'], '=');
-    $query->condition('n.line3', $hexagram[2]['line'], '=');
-    $query->condition('n.line4', $hexagram[3]['line'], '=');
-    $query->condition('n.line5', $hexagram[4]['line'], '=');
-    $query->condition('n.line6', $hexagram[5]['line'], '=');
+    $query->condition('n.line1', $hexagram[0]['line']);
+    $query->condition('n.line2', $hexagram[1]['line']);
+    $query->condition('n.line3', $hexagram[2]['line']);
+    $query->condition('n.line4', $hexagram[3]['line']);
+    $query->condition('n.line5', $hexagram[4]['line']);
+    $query->condition('n.line6', $hexagram[5]['line']);
     $bookNumber = $query
       ->execute()
       ->fetchField();
@@ -565,9 +599,9 @@ class IchingService {
 
   /**
    * @param $hexagram
-   * @return mixed
    *
-   * returns the book contents when passed a hexagram array
+   * @return array|bool
+   * @throws \Exception
    */
   public function findBook($hexagram) {
     $bookNumber = $this->findBooknum($hexagram);
@@ -582,7 +616,7 @@ class IchingService {
       'line_four',
       'line_five',
       'line_six'));
-    $query->condition('n.number', $bookNumber, '=');
+    $query->condition('n.number', $bookNumber);
     $bookArray = $query
       ->execute()
       ->fetchAssoc();
@@ -591,7 +625,7 @@ class IchingService {
 
   /**
    * @return void
-   *
+   * @throws \Exception
    */
   public function cleanIchingDb() {
     $idArray = $this->database->select('tao_iching_readings' ,'i')
@@ -607,7 +641,6 @@ class IchingService {
 
   /**
    * @return array[]
-   *
    */
   public function createTaoTeChings() {
     return [

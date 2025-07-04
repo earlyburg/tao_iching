@@ -1,8 +1,5 @@
 <?php
-/**
- * @file
- * Contains \Drupal\tao_iching\Form\tao_ichingForm.
- */
+
 namespace Drupal\tao_iching\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
@@ -22,8 +19,7 @@ use Drupal\Core\Url;
 use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-
-class tao_ichingForm extends FormBase {
+class TaoIchingForm extends FormBase {
 
   /**
    * @var ExtensionPathResolver $pathResolver

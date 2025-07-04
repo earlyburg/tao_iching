@@ -1,11 +1,6 @@
 <?php
 
 /**
- * @file
- * Install, update and uninstall functions for the tao_iching module.
- */
-
-/**
  * Implements hook_schema().
  *
  * @see hook_schema()

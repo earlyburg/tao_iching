@@ -1,8 +1,5 @@
 <?php
-/**
- * @file
- * Contains \Drupal\tao_iching\Form\tao_ichingSettings.
- */
+
 namespace Drupal\tao_iching\Form;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
@@ -16,8 +13,7 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\tao_iching\Service\IchingService;
 use Psr\Container\ContainerInterface;
 
-
-class tao_ichingSettings extends ConfigFormBase {
+class TaoIchingSettings extends ConfigFormBase {
 
   /**
    * @var Connection $database
@@ -50,6 +46,12 @@ class tao_ichingSettings extends ConfigFormBase {
    */
   const TI_SETTINGS = 'tao_iching.adminsettings';
 
+  /**
+   * @param \Drupal\Core\Database\Connection $connection
+   * @param \Drupal\tao_iching\Service\IchingService $iChingService
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   */
   public function __construct(
     Connection $connection,
     IchingService $iChingService,
@@ -61,6 +63,13 @@ class tao_ichingSettings extends ConfigFormBase {
     parent::__construct($config_factory);
   }
 
+  /**
+   * @param \Psr\Container\ContainerInterface $container
+   *
+   * @return \Drupal\Core\Form\ConfigFormBase|\Drupal\tao_iching\Form\tao_ichingSettings|static
+   * @throws \Psr\Container\ContainerExceptionInterface
+   * @throws \Psr\Container\NotFoundExceptionInterface
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('database'),
@@ -70,6 +79,9 @@ class tao_ichingSettings extends ConfigFormBase {
     );
   }
 
+  /**
+   * @return string
+   */
   public function getFormId() {
     return 'tao_iching_settings_form';
   }
@@ -82,9 +94,10 @@ class tao_ichingSettings extends ConfigFormBase {
 
   /**
    * @param array $form
-   * @param FormStateInterface $form_state
-   * @return array
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
+   * @return array
+   * @throws \Exception
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config(static::TI_SETTINGS);
@@ -193,9 +206,10 @@ class tao_ichingSettings extends ConfigFormBase {
 
   /**
    * @param array $form
-   * @param FormStateInterface $form_state
-   * @return void
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    *
+   * @return void
+   * @throws \Exception
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $formValues = $form_state->getValues();

@@ -1,11 +1,6 @@
 <?php
-/**
- * @file
- * Contains \Drupal\tao_iching\Controller\viewController.
- */
 
 namespace Drupal\tao_iching\Controller;
-
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -85,12 +80,11 @@ private RequestStack $requestStack;
   }
 
   /**
-   * {@inheritdoc}
+   * @param \Psr\Container\ContainerInterface $container
    *
-   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
-   *   The Drupal service container.
-   *
-   * @return static
+   * @return \Drupal\tao_iching\Controller\viewController|static
+   * @throws \Psr\Container\ContainerExceptionInterface
+   * @throws \Psr\Container\NotFoundExceptionInterface
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -106,10 +100,11 @@ private RequestStack $requestStack;
 
   /**
    * @param $callbackResult
-   * @return array
    *
+   * @return array $element
+   * @throws \Exception
    */
-  public function tao_iching_viewpage($callbackResult) {
+  public function taoIchingViewpage($callbackResult) {
     if ($this->iChing->readingExist($callbackResult)) {
       $content = $this->sixClicksMethod($callbackResult);
     }
@@ -135,8 +130,9 @@ private RequestStack $requestStack;
 
   /**
    * @param $callbackResult
-   * @return string
    *
+   * @return string
+   * @throws \Exception
    */
   public function sixClicksMethod($callbackResult) {
     /* figure out the return path if the transaction breaks */
@@ -188,7 +184,7 @@ private RequestStack $requestStack;
     $content .= '</div>';
     $content .= '</div>'; // END .iching-content
     /* get rid of the change indicators and display the final hexagram(s) */
-    $finalhex = $this->iChing->rawhex_cleanup($flippedInitial);
+    $finalhex = $this->iChing->rawhexCleanup($flippedInitial);
     /* get the book numbers for the hexagram(s) */
     $bookname = $this->iChing->findBooknum($finalhex);
     /* get the book from the first hexagram */
@@ -292,7 +288,7 @@ private RequestStack $requestStack;
 
   /**
    * @return string
-   *
+   * @throws \Exception
    */
   public function instantReading() {
     $this->killSwitch->trigger();
@@ -331,7 +327,7 @@ private RequestStack $requestStack;
     $content .= '</div>';
     $content .= '</div>'; // END .iching-content
     /* get rid of the change indicators and display the final hexagram(s) */
-    $finalhex = $this->iChing->rawhex_cleanup($flippedInitial);
+    $finalhex = $this->iChing->rawhexCleanup($flippedInitial);
     /* get the book numbers for the hexagram(s) */
     $bookname = $this->iChing->findBooknum($finalhex);
     /* get the book from the first hexagram */

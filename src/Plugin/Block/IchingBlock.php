@@ -42,12 +42,14 @@ class IchingBlock extends BlockBase implements ContainerFactoryPluginInterface {
   }
 
   /**
-   * @param ContainerInterface $container
+   * @param \Psr\Container\ContainerInterface $container
    * @param array $configuration
    * @param $plugin_id
    * @param $plugin_definition
-   * @return IchingBlock|static
    *
+   * @return \Drupal\tao_iching\Plugin\Block\IchingBlock|static
+   * @throws \Psr\Container\ContainerExceptionInterface
+   * @throws \Psr\Container\NotFoundExceptionInterface
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     return new static(

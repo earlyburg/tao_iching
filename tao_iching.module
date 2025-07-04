@@ -7,6 +7,7 @@
 use Drupal\Core\Form\FormStateInterface;
 
 /**
+ * Implements HOOK_theme().)
  * @param $existing
  * @param $type
  * @param $theme
@@ -31,7 +32,10 @@ function tao_iching_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_cron()
+ * Implements HOOK_cron().
+ *
+ * @return void
+ * @throws \Exception
  */
 function tao_iching_cron() {
   /* remove readings whose storage life is expired */
@@ -51,8 +55,11 @@ function tao_iching_cron() {
 }
 
 /**
- * Implements hook_form_alter
- * attach css and javascript files
+ * @param $form
+ * @param \Drupal\Core\Form\FormStateInterface $form_state
+ * @param $form_id
+ *
+ * @return void
  */
 function tao_iching_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'tao_iching_form') {
@@ -66,7 +73,7 @@ function tao_iching_form_alter(&$form, FormStateInterface $form_state, $form_id)
 
 /**
  * @return mixed
- *
+ * @throws \Exception
  */
 function tao_iching_create_reading() {
   $user = \Drupal::currentUser();
@@ -114,9 +121,14 @@ function tao_iching_create_finished($success, $results, $operations) {
   \Drupal::messenger()->addStatus($message);
 }
 
-
 /**
- * Implements hook_theme_suggestions_alter().
+ * Implements hook_theme_suggestons_alter()
+ *
+ * @param array $suggestions
+ * @param array $variables
+ * @param $hook
+ *
+ * @return void
  */
 function tao_iching_theme_suggestions_alter(array &$suggestions, array $variables, $hook) {
 #dsm($hook);
@@ -134,9 +146,12 @@ function tao_iching_theme_suggestions_alter(array &$suggestions, array $variable
 }
 
 /**
+ * Implements hook_theme_suggestons_block_alter()
+ *
  * @param array $suggestions
  * @param array $variables
- * Implements hook_theme_suggestons_block_alter()
+ *
+ * @return void
  */
 function tao_iching_theme_suggestions_block_alter(array &$suggestions, array $variables) {
   $content = $variables['elements']['content'];

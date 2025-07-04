@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\tao_iching\Service\TaocookieService.
- */
 namespace Drupal\tao_iching\Service;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -12,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-
 
 class TaocookieService implements EventSubscriberInterface {
 
