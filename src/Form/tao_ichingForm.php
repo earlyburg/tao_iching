@@ -16,8 +16,10 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\tao_iching\Service\IchingService;
 use Drupal\tao_iching\Service\TaocookieService;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\ContainerInterface;
 use Drupal\Core\Url;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 
@@ -99,6 +101,8 @@ class tao_ichingForm extends FormBase {
    *   The Drupal service container.
    *
    * @return static
+   * @throws ContainerExceptionInterface
+   * @throws NotFoundExceptionInterface
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -137,7 +141,6 @@ class tao_ichingForm extends FormBase {
       '#type' => 'textarea',
       '#title' => 'Ask A Question.',
       '#cols' => 10,
-      '#resizable' => FALSE,
       '#rows' => 1,
       '#default_value' => $this->iChing->fetchQuestion($this->iChing->getReadingId($this->taoCookie->getCookieValue())),
     ];

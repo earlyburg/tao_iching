@@ -1,7 +1,12 @@
 services:
   tao_iching.service:
     class: Drupal\tao_iching\Service\IchingService
-    arguments: ['@database', '@entity_type.manager']
+    arguments: [
+      '@database',
+      '@entity_type.manager',
+      '@config.factory',
+      '@messenger'
+    ]
   taocookie.service:
     class: Drupal\tao_iching\Service\TaocookieService
     arguments: ['@request_stack']
