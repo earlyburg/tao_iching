@@ -2,9 +2,9 @@
 
 namespace Drupal\tao_iching\Service;
 
+use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -12,11 +12,11 @@ use Symfony\Component\HttpKernel\KernelEvents;
 class TaocookieService implements EventSubscriberInterface {
 
   /**
-   * Current request.
+   * Symphony http request stack
    *
-   * @var Request
+   * @var \Symfony\Component\HttpFoundation\RequestStack $requestStack
    */
-  protected Request $request;
+  private RequestStack $requestStack;
 
   /**
    * Name of the cookie this service will manage.
@@ -47,11 +47,26 @@ class TaocookieService implements EventSubscriberInterface {
   protected bool $deleteCookie = FALSE;
 
   /**
-   * @param RequestStack $request_stack
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *
    */
-  public function __construct(RequestStack $request_stack) {
-    $this->request = $request_stack->getCurrentRequest();
+  public function __construct(
+    RequestStack $request_stack
+  ) {
+    $this->requestStack = $request_stack;
+  }
+
+  /**
+   * @param \Psr\Container\ContainerInterface $container
+   *
+   * @return static
+   * @throws \Psr\Container\ContainerExceptionInterface
+   * @throws \Psr\Container\NotFoundExceptionInterface
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('request_stack'),
+    );
   }
 
   /**
@@ -73,7 +88,8 @@ class TaocookieService implements EventSubscriberInterface {
     if (!empty($this->newCookieValue)) {
       return $this->newCookieValue;
     }
-    return $this->request->cookies->get($this->getCookieName());
+    $request = $this->requestStack->getCurrentRequest();
+    return $request->cookies->get($this->getCookieName());
   }
 
   /**

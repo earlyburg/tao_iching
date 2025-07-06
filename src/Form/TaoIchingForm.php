@@ -22,74 +22,74 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class TaoIchingForm extends FormBase {
 
   /**
-   * @var ExtensionPathResolver $pathResolver
+   * @var \Drupal\Core\Extension\ExtensionPathResolver $pathResolver
    */
-  protected ExtensionPathResolver $localPath;
+  protected $pathResolver;
 
   /**
-   * @var IchingService $iChingService
+   * @var \Drupal\tao_iching\Service\IchingService $iChingService
    */
-  protected IchingService $iChing;
+  protected IchingService $iChingService;
 
   /**
-   * @var MessengerInterface $messengerInterface
+   * @var \Drupal\Core\Messenger\MessengerInterface $messenger
    */
   protected $messenger;
 
   /**
-   * @var LoggerChannelFactory $loggerFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    */
-  protected LoggerChannelFactory $logger;
+  protected $loggerFactory;
 
   /**
-   * @var TaocookieService $taoCookieService
+   * @var \Drupal\tao_iching\Service\TaocookieService $taoCookieService
    */
-  protected TaocookieService $taoCookie;
+  protected TaocookieService $taoCookieService;
 
   /**
-   * @var AccountInterface $accountInterface
+   * @var \Drupal\Core\Session\AccountInterface $accountInterface
    */
-  protected AccountInterface $account;
+  protected AccountInterface $accountInterface;
 
   /**
-   * @var ConfigFactoryInterface $configFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    */
-  protected ConfigFactoryInterface $config;
+  protected $configFactory;
 
   /**
-   * @var RedirectResponse $redirectResponse
+   * @var \Symfony\Component\HttpFoundation\RedirectResponse $redirectResponse
    */
-  protected RedirectResponse $redirect;
+  protected RedirectResponse $redirectResponse;
 
   /**
-   * @var Url $url
+   * @var \Drupal\Core\Url $url
    */
   protected Url $url;
 
   /**
-   * @param ExtensionPathResolver $pathResolver
-   * @param IchingService $iChingService
-   * @param MessengerInterface $messengerInterface
-   * @param LoggerChannelFactory $loggerFactory
-   * @param TaocookieService $taoCookieService
-   * @param AccountInterface $accountInterface
-   * @param ConfigFactoryInterface $configFactory
+   * @param ExtensionPathResolver $path_resolver
+   * @param IchingService $iChing_service
+   * @param MessengerInterface $messenger_interface
+   * @param LoggerChannelFactory $logger_factory
+   * @param TaocookieService $taoCookie_service
+   * @param AccountInterface $account_interface
+   * @param ConfigFactoryInterface $config_factory
    */
   public function __construct(
-    ExtensionPathResolver $pathResolver,
-    IchingService $iChingService,
-    MessengerInterface $messengerInterface,
-    LoggerChannelFactory $loggerFactory,
-    TaocookieService $taoCookieService,
-    AccountInterface $accountInterface,
-    ConfigFactoryInterface $configFactory) {
-    $this->localPath = $pathResolver;
-    $this->iChing = $iChingService;
-    $this->messenger = $messengerInterface;
-    $this->logger = $loggerFactory;
-    $this->taoCookie = $taoCookieService;
-    $this->account = $accountInterface;
-    $this->config = $configFactory;
+    ExtensionPathResolver $path_resolver,
+    IchingService $iChing_service,
+    MessengerInterface $messenger_interface,
+    LoggerChannelFactory $logger_factory,
+    TaocookieService $taoCookie_service,
+    AccountInterface $account_interface,
+    ConfigFactoryInterface $config_factory) {
+    $this->pathResolver = $path_resolver;
+    $this->iChingService = $iChing_service;
+    $this->messenger = $messenger_interface;
+    $this->loggerFactory = $logger_factory;
+    $this->taoCookieService = $taoCookie_service;
+    $this->accountInterface = $account_interface;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -128,10 +128,10 @@ class TaoIchingForm extends FormBase {
    * @throws \Exception
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $localImagePath = '/'.$this->localPath->getPath('module', 'tao_iching').'/imgs';
-    if(!$this->taoCookie->getCookieValue()) {
-      $idString = $this->iChing->getSessionId($this->iChing->makeID());
-      $this->taoCookie->setCookieValue($idString);
+    $localImagePath = '/'.$this->pathResolver->getPath('module', 'tao_iching').'/imgs';
+    if(!$this->taoCookieService->getCookieValue()) {
+      $idString = $this->iChingService->getSessionId($this->iChingService->makeID());
+      $this->taoCookieService->setCookieValue($idString);
     }
     $form = [];
     $form['question'] = [
@@ -139,7 +139,7 @@ class TaoIchingForm extends FormBase {
       '#title' => 'Ask A Question.',
       '#cols' => 10,
       '#rows' => 1,
-      '#default_value' => $this->iChing->fetchQuestion($this->iChing->getReadingId($this->taoCookie->getCookieValue())),
+      '#default_value' => $this->iChingService->fetchQuestion($this->iChingService->getReadingId($this->taoCookieService->getCookieValue())),
     ];
 
     $coinMarkup = "<div id='coin'>";
@@ -196,11 +196,11 @@ class TaoIchingForm extends FormBase {
    */
   public function tao_iching_submit_callback(array $form, FormStateInterface $form_state) {
     ($this->account->getDisplayName()) ? $uname = $this->account->getDisplayName() : $uname = 'Anonymous';
-    $localImagePath = '/'.$this->localPath->getPath('module', 'tao_iching').'/imgs';
-    $sessionIdString = $this->taoCookie->getCookieValue();
-    $readingId = $this->iChing->getReadingId($sessionIdString);
+    $localImagePath = '/'.$this->pathResolver->getPath('module', 'tao_iching').'/imgs';
+    $sessionIdString = $this->taoCookieService->getCookieValue();
+    $readingId = $this->iChingService->getReadingId($sessionIdString);
     /* generate hexagram line */
-    $user_click = $this->iChing->line();
+    $user_click = $this->iChingService->line();
     /* get & set the values from the toss */
     foreach ($user_click as $key => $value) {
       if ($key != "line" && $key != "coinsval") {
@@ -211,31 +211,31 @@ class TaoIchingForm extends FormBase {
     $line = $user_click['line'];
     $coinsval = $user_click['coinsval'];
     /* start a reading database session */
-    if($this->iChing->readingExist($readingId)) {
-      $throw_num = $this->iChing->checkNumber($readingId) + 1;
-      $this->iChing->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
+    if($this->iChingService->readingExist($readingId)) {
+      $throw_num = $this->iChingService->checkNumber($readingId) + 1;
+      $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
       $form_state->setRebuild();
     }
     else {
       $throw_num = 1;
-      $id = $this->iChing->recreateIdArray($sessionIdString);
-      $this->iChing->readingInit($id, $uname, $form_state->getValue('question'));
-      $this->iChing->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
+      $id = $this->iChingService->recreateIdArray($sessionIdString);
+      $this->iChingService->readingInit($id, $uname, $form_state->getValue('question'));
+      $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
       $form_state->setRebuild();
     }
     /* 6 clicks method logic */
-    if($this->iChing->checkNumber($readingId) == 6) {
+    if($this->iChingService->checkNumber($readingId) == 6) {
       $response = new AjaxResponse();
       $url = Url::fromRoute('tao_iching.result', ['callbackResult' => $readingId]);
       $command = new RedirectCommand($url->toString());
       $response->addCommand($command);
-      $this->taoCookie->setDeleteCookie();
+      $this->taoCookieService->setDeleteCookie();
       return $response;
     }
     /* safeguard against broken sessions */
-    if ( $this->iChing->checkNumber($readingId) >= 7 ) {
-      $this->iChing->deleteReading($readingId);
-      $this->taoCookie->setDeleteCookie();
+    if ( $this->iChingService->checkNumber($readingId) >= 7 ) {
+      $this->iChingService->deleteReading($readingId);
+      $this->taoCookieService->setDeleteCookie();
       $this->messenger()->addWarning('Apologies, there was a problem with the website. Please try again.');
     }
     // create our output

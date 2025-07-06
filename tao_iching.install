@@ -8,215 +8,216 @@
  * @ingroup tao_iching
  */
 function tao_iching_schema() {
-  $schema['tao_iching_hexagrams'] = array(
+  $schema['tao_iching_hexagrams'] = [
     'description' => 'The 64 hexagrams as binary objects.',
-    'fields' => array(
-      'book_number' => array(
+    'fields' => [
+      'book_number' => [
         'type' => 'varchar',
         'length' => 4,
         'not null' => TRUE,
         'description' => 'Book Number',
-      ),
-      'line1' => array(
+      ],
+      'line1' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line One',
-      ),
-      'line2' => array(
+      ],
+      'line2' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line Two',
-      ),
-      'line3' => array(
+      ],
+      'line3' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line Three',
-      ),
-      'line4' => array(
+      ],
+      'line4' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line Four',
-      ),
-      'line5' => array(
+      ],
+      'line5' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line Five',
-      ),
-      'line6' => array(
+      ],
+      'line6' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Line Six',
-      ),
-    ),
-    'unique keys' => array(
-    'book_number' => array('book_number'),
-    ),
-  );
+      ],
+    ],
+    'unique keys' => [
+    'book_number' => ['book_number'],
+    ],
+  ];
 
-  $schema['tao_iching_books'] = array(
+  $schema['tao_iching_books'] = [
     'description' => 'The 64 hexagram definitions and meanings.',
-    'fields' => array(
-      'number' => array(
+    'fields' => [
+      'number' => [
         'type' => 'varchar',
         'length' => 4,
         'not null' => TRUE,
         'description' => 'Book Number',
-      ),
-      'descr' => array(
+      ],
+      'descr' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Description',
-      ),
-      'judge' => array(
+      ],
+      'judge' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Judgement',
-      ),
-      'image' => array(
+      ],
+      'image' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Image',
-      ),
-      'line_one' => array(
+      ],
+      'line_one' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line One',
-      ),
-      'line_two' => array(
+      ],
+      'line_two' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line Two',
-      ),
-      'line_three' => array(
+      ],
+      'line_three' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line Three',
-      ),
-      'line_four' => array(
+      ],
+      'line_four' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line Four',
-      ),
-      'line_five' => array(
+      ],
+      'line_five' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line Five',
-      ),
-      'line_six' => array(
+      ],
+      'line_six' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'Line Six',
-      ),
-    ),
-    'unique keys' => array(
-      'number' => array('number'),
-    ),
-  );
+      ],
+    ],
+    'unique keys' => [
+      'number' => ['number'],
+    ],
+  ];
 
-  $schema['tao_iching_lines'] = array(
+  $schema['tao_iching_lines'] = [
     'description' => 'I-Ching lines generated from trigrams',
-    'fields' => array(
-      'tid' => array(
+    'fields' => [
+      'tid' => [
         'type' => 'serial',
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'TID',
-       ),
-      'id' => array(
+       ],
+      'id' => [
         'type' => 'varchar',
         'length' => 40,
         'not null' => TRUE,
         'description' => 'User Session ID',
-      ),
-      'throw_num' => array(
+      ],
+      'throw_num' => [
         'type' => 'varchar',
         'length' => 4,
         'not null' => TRUE,
         'description' => 'Throw Number',
-      ),
-      'line' => array(
+      ],
+      'line' => [
         'type' => 'varchar',
         'length' => 24,
         'not null' => TRUE,
         'description' => 'Line',
-      ),
-      'tri_name' => array(
+      ],
+      'tri_name' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Trigram Name',
-      ),
-      'code' => array(
+      ],
+      'code' => [
         'type' => 'varchar',
         'length' => 8,
         'not null' => TRUE,
         'description' => 'Binary Trigram',
-      ),
-      'coinsval' => array(
+      ],
+      'coinsval' => [
         'type' => 'varchar',
         'length' => 4,
         'not null' => TRUE,
         'description' => 'Coinsval',
-      ),
-    ),
-    'unique keys' => array(
-      'tid' => array('tid'),
-    ),
-  );
+      ],
+    ],
+    'unique keys' => [
+      'tid' => ['tid'],
+    ],
+  ];
 
-  $schema['tao_iching_readings'] = array(
+  $schema['tao_iching_readings'] = [
     'description' => 'I-Ching Readings',
-    'fields' => array(
-      'id' => array(
+    'fields' => [
+      'id' => [
       'type' => 'varchar',
       'length' => 40,
       'not null' => TRUE,
       'description' => 'User Session ID',
-      ),
-      'user_name' => array(
+      ],
+      'user_name' => [
         'type' => 'varchar',
         'length' => 64,
         'not null' => TRUE,
         'description' => 'User Name',
-      ),
-      'question' => array(
+      ],
+      'question' => [
         'type' => 'text',
         'size' => 'medium',
         'not null' => FALSE,
         'description' => 'The Question Asked',
-      ),
-      'timestamp' => array(
+      ],
+      'timestamp' => [
         'type' => 'varchar',
         'length' => 24,
         'not null' => TRUE,
         'description' => 'Question Timestamp',
-      ),
-    ),
-    'unique keys' => array(
-      'id' => array('id'),
-    ),
-  );
+      ],
+    ],
+    'unique keys' => [
+      'id' => ['id'],
+    ],
+  ];
   return $schema;
 }
 
 /**
  * Implements hook_install().
  *
+ * @throws \Exception
  * @see hook_install()
  *
  * @ingroup tao_iching
@@ -256,7 +257,9 @@ function tao_iching_install() {
 
 }
 
-
+/**
+ * @return array[]
+ */
 function createHexagramsArray() {
   return [
     0 => ['01', 'yang', 'yang', 'yang', 'yang', 'yang', 'yang'],
@@ -326,7 +329,9 @@ function createHexagramsArray() {
   ];
 }
 
-
+/**
+ * @return array[]
+ */
 function createBooksArray() {
   return [
     0 => [
@@ -433,7 +438,7 @@ function createBooksArray() {
       'line_one' => 'Nine at the beginning means:<br>Return to the way. How could there be blame in this? Good fortune.<br>It lies in the nature of a strong man to press forward. In so doing he encounters obstructions. Therefore, he returns to the way suited to his situation, where he is free to advance or to retreat. In the nature of things this will bring good fortune, for it is wise and reasonable not to try to obtain anything by force.',
       'line_two' => 'Nine in the second place means:<br>He allows himself to be drawn into returning. Good fortune.<br> One would like to press forward, but before going farther one sees from the example of others like oneself that this way is blocked. In such a case, if the effort to push forward is not in harmony with the time, a reasonable and resolute man will not expose himself to a personal rebuff, but will retreat with others of like mind. This brings good fortune, because he does not needlessly jeopardize himself.',
       'line_three' => 'Nine in the third place means:<br>The spokes burst out of the wagon wheels. Man and wife roll their eyes.<br>Here an attempt is made to press forward forcibly, in the consciousness that the obstructing power is slight. But since, under the circumstances, power actually lies with the weak, this sudden offensive is doomed to failure. External conditions hinder the advance, just as loss of the wheel spokes stops the progress of a wagon. We do not yet heed this hint from fate, hence there are annoying arguments like those of a married couple. Naturally this is not a favorable state of things, for though the situation may enable the weaker side to hold its ground, the difficulties are too numerous to permit of a happy result. In consequence even the strong man cannot so use his power as to exert the right influence on those around him. He experiences a rebuff where he expected an easy victory, and he thus compromises his dignity.',
-      'line_four' => 'Six in the fourth place means:<br>If you are sincere, blood vanishes and fear gives way. No blame.<br>If one is in the difficult and responsible position of counselor to a powerful man, one should restrain him in such a way that right may prevail. Therin lies a danger so great that the threat of actual bloodshed may arise. Nonetheless, the power of disinterested truth is greater than all these obstacles. It carries such weight that the end is achieved, and all danger of bloodshed and all fear disappear.',
+      'line_four' => 'Six in the fourth place means:<br>If you are sincere, blood vanishes and fear gives way. No blame.<br>If one is in the difficult and responsible position of counselor to a powerful man, one should restrain him in such a way that right may prevail. Therein lies a danger so great that the threat of actual bloodshed may arise. Nonetheless, the power of disinterested truth is greater than all these obstacles. It carries such weight that the end is achieved, and all danger of bloodshed and all fear disappear.',
       'line_five' => 'Nine in the fifth place means:<br>If you are sincere and loyally attached, you are rich in your neighbors.<br>Loyalty leads to firm ties because it means that each partner complements the other. In the weaker person loyalty consists in devotion, in the stronger it consists in trustworthiness. This relation of mutual reinforcement leads to a true wealth that is all the more apparent because it is not selfishly hoarded but is shared with friends. Pleasure shared is pleasure doubled.',
       'line_six' => 'Nine at the top means:<br>The rain comes, there is rest. This is due to the lasting effect of character. Perseverance brings the woman into danger. The moon is nearly full. If the superior man persists, Misfortune comes.<br>Success is at hand. The wind has driven up the rain. A fixed standpoint has been reached. This has come about through the culmination of small effects produced by reverence for a superior character. A success thus secured bit by bit calls for great caution. It would be a dangerous illusion for anyone to think he could presume upon it. The female principle, the weak element that has won the victory, should never persist in vaunting it, as that would lead to danger. The dark power in the moon is strongest when the moon is almost full. When it is full and directly opposite the sun, its waning is inevitable. Under such circumstances one must be content with what has been achieved. To advance any further, before the appropriate time has come, would lead to misfortune.',
     ],
@@ -531,7 +536,7 @@ function createBooksArray() {
       'line_three' => 'Six in the third place means:<br>If one clings to the strong man, one loses the little boy. Through following one finds what one seeks. It furthers one to remain persevering.<br>When the right connection with distinguished people has been found, a certain loss naturally ensues. A man must part company with the inferior and superficial, but in his heart he will feel satisfied, because he seeks and needs for the development of his personality. The important thing is to remain firm. He must know what he wants and not be led astray by momentary inclinations.',
       'line_four' => 'Nine in the fourth place means:<br>Following creates success. Perseverance brings misfortune. To go ones way with sincerity brings clarity. How could there be blame in this?<br> It often happens, when a man exerts a certain amount of influence, that he obtains a following by condescension toward inferiors. But the people who attach themselves to him are not honest in their intentions. They seek personal advantage and try to make themselves indispensable through flattery and subservience. If one becomes accustomed to such satellites and cannot do without them, it brings misfortune. Only when a man is completely free from his ego, and intent, by conviction, upon what is right and essential, does he acquire the clarity that enables him to see through such people, and become free of blame.',
       'line_five' => 'Nine in the fifth place means:<br>Sincere in the good. Good fortune.<br>Every man must have something he follows, something that serves him as a lodestar. He who follows with conviction the beautiful and the good may feel himself strengthened by this saying.',
-      'line_six' => 'Six at the top means:<br>He meets with firm allegiance, and is still further bound. The king introduces him to the Western Mountain.<br>This refers to a man, an exalted sage, who has already put the turmoil of the world behind him. But a follower appears who understands him and is not to be put off, so the sage comes back into the world and aids the other in his work. Thus, there develops an eternal tie between the two.<br>The allegory is chosen from the annals of the Chou dynasty. The rulers of this dynasty honored men who had served them well by awarding them a place in the royal familys temple of ancestors on the Western Mountain. In this way they were regarded as sharing in the destiny of the ruling family.',
+      'line_six' => 'Six at the top means:<br>He meets with firm allegiance, and is still further bound. The king introduces him to the Western Mountain.<br>This refers to a man, an exalted sage, who has already put the turmoil of the world behind him. But a follower appears who understands him and is not to be put off, so the sage comes back into the world and aids the other in his work. Thus, there develops an eternal tie between the two.<br>The allegory is chosen from the annals of the Chou dynasty. The rulers of this dynasty honored men who had served them well by awarding them a place in the royal family\'s temple of ancestors on the Western Mountain. In this way they were regarded as sharing in the destiny of the ruling family.',
     ],
     17 => [
       'number' => '18',
@@ -548,7 +553,7 @@ function createBooksArray() {
     18 => [
       'number' => '19',
       'descr' => 'Lin / Approach<br>Above: K`UN THE RECEPTIVE, EARTH<br>Below: TUI THE JOYOUS, LAKE<br>The Chinese word lin has a range of meanings that is not exhausted by any single word of another language. The ancient explanations in the Book of Changes give as its first meaning, "becoming great". What becomes great are the two strong lines growing into the hexagram from below, the light-giving power expands with them. The meaning is then further extended to include the concept of approach, especially the approach of what is strong and highly placed in relation to what is lower. Finally, the meaning includes the attitude of condescension of a man in high position toward the people, and in general the setting to work on affairs. This hexagram is linked with the twelfth month (January-February), when after the winter solstice, the light power begins to ascend again.',
-      'judge' => 'APPROACH has supreme success. Perseverance furthers. When the eighth month comes, there will be misfortune.<br>The hexagram as a whole points to a time of joyous, hopeful progress. Spring is approaching. Joy and forbearance bring high and low nearer together. Success is certain, but we must work with determination and perseverance to make full use of the propitiousness of the time. Additionaly, spring does not last forever. In the eighth month the aspects are reversed. Then only two strong, light lines are left, and these do not advance but are in retreat (see next hexagram). We must take heed of this change in good time. If we meet evil before it becomes reality, before it has even begun to stir, we can master it.',
+      'judge' => 'APPROACH has supreme success. Perseverance furthers. When the eighth month comes, there will be misfortune.<br>The hexagram as a whole points to a time of joyous, hopeful progress. Spring is approaching. Joy and forbearance bring high and low nearer together. Success is certain, but we must work with determination and perseverance to make full use of the propitiousness of the time. Additionally, spring does not last forever. In the eighth month the aspects are reversed. Then only two strong, light lines are left, and these do not advance but are in retreat (see next hexagram). We must take heed of this change in good time. If we meet evil before it becomes reality, before it has even begun to stir, we can master it.',
       'image' => 'The earth above the lake: The image of APPROACH. Thus, the superior man is inexhaustible in his will to teach, and is without limits in his tolerance and protection of the people.<br>The earth borders upon the lake from above. This symbolizes the approach and consideration of the man of higher position to those beneath him. The two parts of the image indicate what his attitude toward these people will be. Just as the lake is inexhaustible in depth, so the sage is inexhaustible in his readiness to teach mankind, and just as the earth is boundlessly wide, sustaining and caring for all creatures on it, so the sage sustains and cares for all people and excludes no part of humanity.',
       'line_one' => 'Nine at the beginning means:<br>Joint approach. Perseverance brings good fortune.<br>The good begins to prevail and to find response in influential circles. This in turn is an incentive to men of ability. It is well to join this upward trend, but we must not let ourselves be carried away by the currents of the time, but must adhere perseveringly to what is right. This brings good fortune.',
       'line_two' => 'Nine in the second place means:<br>Joint approach. Good fortune. Everything furthers.<br>When the stimulus to approach comes from a high place, and when a man has the inner strength and consistency that need no admonition, good fortune will ensue, nor does the future have any cause any concern. He is well aware that everything earthly is transitory, and that a descent follows upon every rise. There is no need to be confused by this universal law of fate. Everything serves to further. Therefore, he will travel the paths of life swiftly, honestly, and valiantly.',
@@ -563,7 +568,7 @@ function createBooksArray() {
       'judge' => 'CONTEMPLATION. The ablution has been made, but not yet the offering. Full of trust they look up to him.<br>The sacrificial ritual in China began with an ablution and a libation by which the Deity was invoked, after which the sacrifice was offered. The moment of time between these two ceremonies is the most sacred of all, being the moment of deepest inner-concentration. If piety is sincere and expressive of real faith, the contemplation of it has a transforming and awe-inspiring effect on those who witness it.<br>Thus also in nature a holy seriousness is to be seen in the fact that natural occurrences are uniformly subject to law. Contemplation of the divine meaning underlying the workings of the universe gives to the man who is called upon to influence others the means of producing like effects. This requires that power of inner concentration which religious contemplation develops in great men strong in faith. It enables them to apprehend the mysterious and divine laws of life, and by means of the most profound inner-concentration they give expression to these laws in their own persons. Thus, a hidden spiritual power emanates from them, influencing and dominating others without their being aware of how it happens.',
       'image' => 'The wind blows over the earth: The image of CONTEMPLATION. Thus, the kings of old visited the regions of the world, and contemplated upon the people, and gave them instruction.<br>When the wind blows over the earth it goes far and wide, and the grass must bend to its power. These two occurrences find confirmation in the hexagram. The two images are used to symbolize a practice of the kings of old of making regular journeys to survey his realm. The ruler could, in the first place, survey his realm and make certain that none of the existing usages of the people escaped notice, and in the second, he could exert influence through which such customs that were unsuitable could be changed.<br>All of this points to the power possessed by a superior personality. On the one hand, such a man will have a view of the real sentiments of the great mass of humanity and therefore cannot be deceived. On the other, he will impress the people so profoundly, by his mere existence and by the impact of his personality, that they will be swayed by him as the grass by the wind.',
       'line_one' => 'Six at the beginning means:<br>Boy-like contemplation. For an inferior man, no blame. For a superior man, humiliation.<br>This means contemplation from a distance, without comprehension. A man of influence is at hand, but his influence is not understood by the common people. This matters little in the case of the masses, for they benefit by the actions of the ruling sage whether they understand them or not. But for a superior man it is a disgrace. He must not content himself with a shallow, thoughtless view of prevailing forces, but must contemplate them as a connected whole and try to understand them.',
-      'line_two' => 'Six in the second place means:<br>Contemplation through the crack of the door. Furthering with the perseverance of a woman.<br>Through the crack of the door one has a limited outlook. One looks outward from within. Contemplation is subjectively limited. One tends to relate everything to oneself and cannot put oneself in anothers place and understand his motives. This is appropriate for a good housewife. It is not necessary for her to be conversant with the affairs of the world. For a man who must take active part in public life, such a narrow, egotistic way of contemplating things is of course harmful.',
+      'line_two' => 'Six in the second place means:<br>Contemplation through the crack of the door. Furthering with the perseverance of a woman.<br>Through the crack of the door one has a limited outlook. One looks outward from within. Contemplation is subjectively limited. One tends to relate everything to oneself and cannot put oneself in another\'s place and understand his motives. This is appropriate for a good housewife. It is not necessary for her to be conversant with the affairs of the world. For a man who must take active part in public life, such a narrow, egotistic way of contemplating things is of course harmful.',
       'line_three' => 'Six in the third place means:<br>Contemplation of my life decides the choice between advance and retreat.<br>This is the place of transition. We no longer look outward to receive pictures that are more or less limited and confused, but direct out contemplation upon ourselves in order to find a guideline for our decisions. This self-contemplation means the overcoming of naive egotism in the person who sees everything solely form his own standpoint. He begins to reflect and in this way acquires objectivity. However, self-knowledge does not mean preoccupation with ones own thoughts. Rather, it means concern about the effects one creates. It is only the effects our lives produce that give us the right to judge whether what we have done means progress or regression.',
       'line_four' => 'Six in the fourth place means:<br>Contemplation of the light of the kingdom. It furthers one to exert influence as the guest of a king.<br>This describes a man who understands the secrets by which a kingdom can be made to flourish. Such a man must be given an authoritative position, in which he can exert influence. He should be, so to speak, a guest; that is, he should be honored and allowed to act independently, and should not be used as a tool.',
       'line_five' => 'Nine in the fifth place means:<br>Contemplation of my life. The superior man is without blame.<br>A man in an authoritative position to whom others look up must always be ready for self-examination. The right sort of self-examination, however, consists not in idle brooding over oneself but in examining the effects one produces. Only when these effects are good, and when ones influence on others is good, will the contemplation of ones own life bring the satisfaction of knowing oneself to be free of mistakes.',
@@ -614,7 +619,7 @@ function createBooksArray() {
       'line_two' => 'Six in the second place means:<br>Quiet return. Good fortune.<br>Return always calls for a decision and is an act of self-mastery. It is made easier if a man is in good company. If he can bring himself to put aside pride and follow the example of good men, good fortune results.',
       'line_three' => 'Six in the third place means:<br>Repeated return. Danger. No blame.<br>There are people of a certain inner instability who feel a constant urge to reverse themselves. There is danger in continually deserting the good because of uncontrolled desires, then turning back to it again because of a better resolution. However, since this does not lead to the habituation of evil, a general inclination to overcome the defect is not wholly excluded.',
       'line_four' => 'Six in the fourth place means:<br>Walking in the midst of others, one returns alone.<br>A man is in a society composed of inferior people, but is connected spiritually with a strong and good friend, and this makes him turn back alone. Although nothing is said of reward and punishment, this return is certainly favorable, for such a resolve to choose the good brings its own reward.',
-      'line_five' => 'Six in the fifth place means:<br>Noblehearted return. No remorse.<br>When the time for return has come, a man should not take shelter in trivial excuses, but should look within and examine himself. If he has done something wrong he should make a noble-hearted resolution to confess his fault. No one will regret having taken this road.',
+      'line_five' => 'Six in the fifth place means:<br>Noble-hearted return. No remorse.<br>When the time for return has come, a man should not take shelter in trivial excuses, but should look within and examine himself. If he has done something wrong he should make a noble-hearted resolution to confess his fault. No one will regret having taken this road.',
       'line_six' => 'Six at the top means:<br>Missing the return. Misfortune. Misfortune from within and without. If armies are set marching in this way, one will in the end suffer a great defeat disastrous for the ruler of the country. For ten years, It will not be possible to attack again.<br>If a man misses the right time for return, he meets with misfortune. The misfortune has its inner cause in a wrong attitude toward the world. The misfortune coming upon him from without results from this wrong attitude. What is pictured here is blind obstinacy and the judgment that is visited upon it.',
     ],
     24 => [
@@ -667,7 +672,7 @@ function createBooksArray() {
     ],
     28 => [
       'number' => '29',
-      'descr' => 'K`an / The Abysmal (Water)<br>Above: K`AN THE ABYSMAL, WATER<br>Below: K`AN THE ABYSMAL, WATER<br>This hexagram consists of a doubling of the trigram K`an. It is one of the eight hexagrams in which doubling occurs. The trigram K`an means a plunging in. A yang line has plunged in between two yin lines and is closed in by them like water in a ravine. The trigram K`an is also the middle son. The Receptive has obtained the middle line of the Creative, and thus K`an develops. As an image it represents water, the water that comes from above and is in motion on earth in streams and rivers, giving rise to all life on earth.<br>In mans world K`an represents the heart, the soul locked up within the body, the principle of light inclosed in the dark, that is to say, reason. The name of the hexagram, because the trigram is doubled, has the additional meaning, "repetition of danger". Thus, the hexagram is intended to designate an objective situation to which one must become accustomed, not a subjective attitude. For danger due to a subjective attitude means either foolhardiness or guile. Also, a ravine is used to symbolize danger, as it is a situation in which a man is in the same pass as the water in a ravine, and, like the water, he can escape if he behaves correctly.',
+      'descr' => 'K`an / The Abysmal (Water)<br>Above: K`AN THE ABYSMAL, WATER<br>Below: K`AN THE ABYSMAL, WATER<br>This hexagram consists of a doubling of the trigram K`an. It is one of the eight hexagrams in which doubling occurs. The trigram K`an means a plunging in. A yang line has plunged in between two yin lines and is closed in by them like water in a ravine. The trigram K`an is also the middle son. The Receptive has obtained the middle line of the Creative, and thus K`an develops. As an image it represents water, the water that comes from above and is in motion on earth in streams and rivers, giving rise to all life on earth.<br>In mans world K`an represents the heart, the soul locked up within the body, the principle of light enclosed in the dark, that is to say, reason. The name of the hexagram, because the trigram is doubled, has the additional meaning, "repetition of danger". Thus, the hexagram is intended to designate an objective situation to which one must become accustomed, not a subjective attitude. For danger due to a subjective attitude means either foolhardiness or guile. Also, a ravine is used to symbolize danger, as it is a situation in which a man is in the same pass as the water in a ravine, and, like the water, he can escape if he behaves correctly.',
       'judge' => 'The Abysmal repeated. If you are sincere, you have success in your heart, and whatever you do succeeds.<br>Through repetition of danger we grow accustomed to it. Water sets the example for the right conduct under such circumstances. It flows on and on, and merely fills up all the places through which it flows, it does not shrink from any dangerous spot nor from any plunge, and nothing can make it lose its own essential nature. It remains true to itself under all conditions. Thus, likewise, if one is sincere when confronted with difficulties, the heart can penetrate the meaning of the situation. Once we have gained inner mastery of a problem, it will come about naturally that the action we take will succeed. In danger all that counts really is carrying out all that has to be done with thoroughness and going forward, in order not to perish through tarrying in the danger.<br>Properly used, danger can have an important meaning as a protective measure. Thus, heaven has its perilous height protecting it against every attempt at invasion, and earth has its mountains and bodies of water, separating countries by their dangers. Thus also, rulers make use of danger to protect themselves against attacks from without and against turmoil within.',
       'image' => 'Water flows on uninterruptedly and reaches its goal: The image of the Abysmal repeated. Thus, the superior man walks in lasting virtue and carries on the business of teaching.<br>Water reaches its goal by flowing continually. It fills up every depression before it flows on. The superior man follows its example; he is concerned that goodness should be an established attribute of character rather than an accidental and isolated occurrence. So likewise in teaching others, everything depends on consistency, for it is only through repetition that the pupil makes the material his own.',
       'line_one' => 'Six at the beginning means:<br>Repetition of the Abysmal. In the abyss one falls into a pit. Misfortune.<br>By growing used to what is dangerous, a man can easily allow it to become part of him. He is familiar with it and grows used to evil. With this he has lost the right way, and misfortune is the natural result.',
@@ -843,7 +848,7 @@ function createBooksArray() {
       'line_three' => 'Nine in the third place means:<br>To be powerful in the cheekbones brings misfortune. The superior man is firmly resolved. He walks alone and is caught in the rain. He is bespattered, and people murmur against him. No blame.<br> Here we have a man in an ambiguous situation. While all others are engaged in a resolute fight against all that is inferior, he alone has a certain relationship with an inferior man. If he were to show strength outwardly and turn against this man before the time is ripe, he would only endanger the entire situation, because the inferior man would too quickly have recourse to countermeasures. The task of the superior man becomes extremely difficult here. He must be firmly resolved within himself and, while maintaining association with the inferior man, avoid any participation in his vileness. He will of course be misjudged. It will be thought that he belongs to the party of the inferior man. He will be lonely because no one will understand him. His relations with the inferior man will sully him in the eyes of the multitude, and they will turn against him, grumbling. But he can endure this lack of appreciation and makes no mistake, because he remains true to himself.',
       'line_four' => 'Nine in the fourth place means:<br>There is no skin on his thighs, and walking comes hard. If a man were to let himself be led like a sheep, remorse would disappear. But if these words are heard, they will not be believed.<br> Here a man is suffering from inner restlessness and cannot abide in his place. He would like to push forward under any circumstances, but encounters insuperable obstacles. Thus, his situation entails an inner conflict. This is due to the obstinacy with which he seeks to enforce his will. If he would desist from this obstinacy, everything would go well. But this advice, like so much other good counsel, will be ignored. For obstinacy makes a man unable to hear, for all that he has ears.',
       'line_five' => 'Nine in the fifth place means:<br>In dealing with weeds, firm resolution is necessary. Walking in the middle remains free of blame.<br>Weeds always grow back again and are difficult to exterminate. So too, the struggle against an inferior man in a high position demands firm resolution. One has certain relations with him, hence there is danger that one may give up the struggle as hopeless. However, this must not be. One must go on resolutely and not allow himself to be deflected from his course. Only in this way does one remain free of blame.',
-      'line_six' => 'Six at the top means:<br>No cry. In the end misfortune comes.<br>Victory seems to have been achieved. There remains merely a remnant of the evil resolutely to be eradicated as the time demands. Everything looks easy, however therin lies the danger. If we are not on-guard, evil will succeed in escaping by means of concealment, and when it has eluded us, new misfortunes will develop from the remaining seeds, for evil does not die easily. So too in dealing with the evil in ones own character, one must go to work with thoroughness. If out of carelessness anything were to be overlooked, new evil would arise from it.',
+      'line_six' => 'Six at the top means:<br>No cry. In the end misfortune comes.<br>Victory seems to have been achieved. There remains merely a remnant of the evil resolutely to be eradicated as the time demands. Everything looks easy, however therein lies the danger. If we are not on-guard, evil will succeed in escaping by means of concealment, and when it has eluded us, new misfortunes will develop from the remaining seeds, for evil does not die easily. So too in dealing with the evil in ones own character, one must go to work with thoroughness. If out of carelessness anything were to be overlooked, new evil would arise from it.',
     ],
     43 => [
       'number' => '44',
@@ -878,7 +883,7 @@ function createBooksArray() {
       'line_two' => 'Nine in the second place means:<br>If one is sincere, it furthers one to bring even a small offering. No blame.<br>Here a strong man is presupposed. It is true that he does not fit in with his environment, inasmuch as he is too brusque and pays too little attention to form. But as he is upright in character, he meets with response, and his lack of outward form does no harm. Here uprightness is the outcome of sound qualities of character, whereas in the corresponding line of the preceding hexagram it is the result of innate humility.',
       'line_three' => 'Nine in the third place means:<br>One pushes upward into an empty city.<br>All obstructions that generally block progress fall away here. Things proceed with remarkable ease. Unhesitatingly one follows this road, in order to profit by ones success. Seen from without, everything seems to be in the best of order. However, no promise of good fortune is added. It is a question how long such unobstructed success can last. However, it is not wise to yield to such misgivings, because they only inhibit ones power. Instead, the point is to profit by the propitiousness of time.',
       'line_four' => 'Six in the fourth place means:<br>The king offers him Mount Ch`i. Good fortune. No blame.<br>Mount Ch`i is in western China, the homeland of King Wên, whose son, the Duke of Chou, added the words to the individual lines. The pronouncement takes us back to a time when the Chou dynasty was coming into power. At that time King Wên introduced his illustrious helpers to the god of his native mountain, and they received their places in the halls of the ancestors by the side of the ruler. This indicates a stage in which pushing upward attains its goal. One acquires fame in the sight of gods and men, is received into the circle of those who foster the spiritual life of the nation, and thereby attains a significance that endures beyond time.',
-      'line_five' => 'Six in the fifth place means:<br>Perseverance brings good fortune. One pushes upward by steps.<br>When a man is advancing farther and farther, it is important for him not to become intoxicated by success. Precisely when he experiences great success it is necessary to remain sober and not to try to skip any stages. He must go on slowly, step by step, as though hesitant. Only such calm, steady progress, overleaping nothing, leads to the goal.',
+      'line_five' => 'Six in the fifth place means:<br>Perseverance brings good fortune. One pushes upward by steps.<br>When a man is advancing farther and farther, it is important for him not to become intoxicated by success. Precisely when he experiences great success it is necessary to remain sober and not to try to skip any stages. He must go on slowly, step by step, as though hesitant. Only such calm, steady progress, leaping over nothing, leads to the goal.',
       'line_six' => 'Six at the top means:<br>Pushing upward in darkness. It furthers one to be unremittingly persevering.<br>He who pushes upward blindly deludes himself. He knows only advance, not retreat, and this means exhaustion. In such a case it is important to be constantly mindful that one must be conscientious and consistent and must remain so. Only thus does one become free of blind impulse, which is always harmful.',
     ],
     46 => [
@@ -992,7 +997,7 @@ function createBooksArray() {
     55 => [
       'number' => '56',
       'descr' => 'Lü / The Wanderer<br>Above: LI THE CLINGING, FIRE<br>Below: KÊN KEEPING STILL, MOUNTAIN<br>The mountain, Kên, stands still. Above it fire, Li, flames up and does not tarry. Therefore, the two trigrams do not stay together. Strange lands and separation are the wanderers lot.',
-      'judge' => 'THE WANDERER. Success through smallness. Perseverence brings good fortune, to the wanderer.<br>When a man is a wanderer and stranger, he should be not be gruff nor overbearing. He has no large circle of acquaintances, therefore he should not give himself airs. He must be cautious and reserved; in this way he protects himself from evil. If he is obliging toward others, he wins success.  A wanderer has no fixed abode, and his home is the road. Therefore, he must take care to remain upright and steadfast, so that he sojourns only in the proper places, associating only with good people. Then he has good fortune and can go his way unmolested.',
+      'judge' => 'THE WANDERER. Success through smallness. Perseverance brings good fortune, to the wanderer.<br>When a man is a wanderer and stranger, he should be not be gruff nor overbearing. He has no large circle of acquaintances, therefore he should not give himself airs. He must be cautious and reserved; in this way he protects himself from evil. If he is obliging toward others, he wins success.  A wanderer has no fixed abode, and his home is the road. Therefore, he must take care to remain upright and steadfast, so that he sojourns only in the proper places, associating only with good people. Then he has good fortune and can go his way unmolested.',
       'image' => 'Fire on the mountain: The image of THE WANDERER. Thus, the superior man is clear-minded and cautious in imposing penalties, and protracts no lawsuits.<br>When grass on a mountain takes fire, there is bright light. However, the fire does not linger in one place, but travels on to new fuel. It is a phenomenon of short duration. This is what penalties and lawsuits should be like. They should be a quickly passing matter, and must not be dragged out indefinitely. Prisons ought to be places where people are lodged only temporarily, as guests are. They must not become dwelling places.',
       'line_one' => 'Six at the beginning means:<br>If the wanderer busies himself with trivial things, he draws down misfortune upon himself.<br>A wanderer should not demean himself or busy himself with inferior things he meets with along the way. The humbler and more defenseless his outward position, the more should he preserve his inner dignity. For a stranger is mistaken if he hopes to find a friendly reception through lending himself to jokes and buffoonery. The result will be only contempt and insulting treatment.',
       'line_two' => 'Six in the second place means:<br>The wanderer comes to an inn. He has his property with him. He wins the steadfastness of a young servant.<br>The wanderer here described is modest and reserved. He does not lose touch with his inner being, hence he finds a resting place. In the outside world he does not lose the liking of other people, hence all persons further him, so that he can acquire property. Moreover, he wins the allegiance of a faithful and trustworthy servant which is a thing of inestimable value to a wanderer.',
@@ -1095,7 +1100,7 @@ function createBooksArray() {
       'line_three' => 'Six in the third place means:<br>Before completion, attack brings misfortune. It furthers one to cross the great water.<br>The time of transition has arrived, but one lacks the strength to complete the transition. If one should attempt to force it, disaster would result, because collapse would then be unavoidable. What is to be done? A new situation must be created; one must engage the energies of able helpers and in this fellowship take the decisive step to cross the great water. Then completion will become possible.',
       'line_four' => 'Nine in the fourth place means:<br>Perseverance brings good fortune. Remorse disappears. Shock is used thus to discipline the devils country. For three years, great realms are awarded.<br>Now it is the time of struggle. The transition must be completed. We must make ourselves strong in resolution, and this brings good fortune. All misgivings that might arise in such grave times of struggle must be silenced. It is a question of a fierce battle to break and to discipline the "devils country", the forces of decadence. The struggle also has its reward. Now is the time to lay the foundations of power and mastery for the future.',
       'line_five' => 'Six in the fifth place means:<br>Perseverance brings good fortune. No remorse. The light of the superior man is true. Good fortune.<br>The victory has been won. The power of steadfastness has not been routed. Everything has gone well. All misgivings have been overcome. Success has justified the deed. The light of a superior personality shines forth anew and makes its influence felt among men who have faith in it and rally around it. The new time has arrived, and with it good fortune. And just as the sun shines forth in redoubled beauty after rain, or as a forest grows more freshly green from charred ruins after a fire, so the new era appears all the more glorious by contrast with the misery of the old.',
-      'line_six' => 'Nine at the top means:<br>There is drinking of wine in genuine confidence. No blame, but if one wets his head, in truth he will lose it.<br>Before completion, at the dawning of the new time, friends gather in an atmosphere of mutual trust, and the time of waiting is passed in conviviality. Since the new era is hard on the threshold, there is no blame in this. But one must be careful in all this to keep within proper bounds. If in his exuberance a man gets drunk, he forfeits the favorableness of the situation through his intemperance. NOTE. The hexagram AFTER COMPLETION represents a gradual transition from a time of ascent past a peak of culture to a time of standstill. The hexagram BEFORE COMPLETION represents a transition from chaos to order. This hexagram comes at the end of the Book of Changes. It points to the fact that every end contains a new beginning. Thus, it gives hope to men. The Book of Changes is a book of the future.',
+      'line_six' => 'Nine at the top means:<br>There is drinking of wine in genuine confidence. No blame, but if one wets his head, in truth he will lose it.<br>Before completion, at the dawning of the new time, friends gather in an atmosphere of mutual trust, and the time of waiting is passed in conviviality. Since the new era is hard on the threshold, there is no blame in this. But one must be careful in all this to keep within proper bounds. If in his exuberance a man gets drunk, he forfeits the favorability of the situation through his intemperance. NOTE. The hexagram AFTER COMPLETION represents a gradual transition from a time of ascent past a peak of culture to a time of standstill. The hexagram BEFORE COMPLETION represents a transition from chaos to order. This hexagram comes at the end of the Book of Changes. It points to the fact that every end contains a new beginning. Thus, it gives hope to men. The Book of Changes is a book of the future.',
     ],
   ];
 

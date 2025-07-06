@@ -16,26 +16,26 @@ use Psr\Container\ContainerInterface;
 class TaoIchingSettings extends ConfigFormBase {
 
   /**
-   * @var Connection $database
+   * @var \Drupal\Core\Database\Connection $database
    */
   protected Connection $database;
 
   /**
    * Drupal config factory interface.
    *
-   * @var ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    */
   protected $configFactory;
 
   /**
-   * @var IchingService $iChing
+   * @var \Drupal\tao_iching\Service\IchingService $iChing
    */
   protected IchingService $iChing;
 
   /**
    * Messenger service.
    *
-   * @var LoggerChannelFactory $logger_factory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
    */
   protected $loggerFactory;
 
@@ -48,18 +48,19 @@ class TaoIchingSettings extends ConfigFormBase {
 
   /**
    * @param \Drupal\Core\Database\Connection $connection
-   * @param \Drupal\tao_iching\Service\IchingService $iChingService
+   * @param \Drupal\tao_iching\Service\IchingService $iChing_service
    * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    */
   public function __construct(
     Connection $connection,
-    IchingService $iChingService,
+    IchingService $iChing_service,
     LoggerChannelFactory $logger_factory,
     ConfigFactoryInterface $config_factory) {
     $this->database = $connection;
-    $this->iChing = $iChingService;
+    $this->iChing = $iChing_service;
     $this->loggerFactory = $logger_factory;
+    $this->configFactory = $config_factory;
     parent::__construct($config_factory);
   }
 
