@@ -227,14 +227,14 @@ class TaoIchingSettings extends ConfigFormBase {
     }
     if ($formValues['howmany'] != '' && !empty($formValues['howmany'])) {
       $numberToGenerate = $formValues['howmany'];
-      $batch = array(
+      $batch = [
         'title' => $this->t('Generate Readings...'),
         'operations' => [],
         'init_message' => $this->t('Initializing...'),
         'progress_message' => $this->t('Processed @current out of @total.'),
         'error_message' => $this->t('An error occurred during processing'),
         'finished' => 'tao_iching_create_finished',
-      );
+      ];
       for ($i = 0; $i < intval($numberToGenerate); $i++) {
         $batch['operations'][] = ['tao_iching_create_reading', []];
       }
@@ -245,7 +245,7 @@ class TaoIchingSettings extends ConfigFormBase {
       foreach ($this->iChing->createTaoTeChings() as $taoArray) {
         try {
           $this->iChing->createTaoPageNode($taoArray);
-        } catch (InvalidPluginDefinitionException|EntityStorageException|PluginNotFoundException $e) {
+        } catch (InvalidPluginDefinitionException | EntityStorageException|PluginNotFoundException $e) {
           $this->loggerFactory->get('tao_iching')
             ->error('Function createTaoPageNode() returned - '. $e);
         }
