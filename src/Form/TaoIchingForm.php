@@ -195,7 +195,7 @@ class TaoIchingForm extends FormBase {
    * @throws \Exception
    */
   public function tao_iching_submit_callback(array $form, FormStateInterface $form_state) {
-    ($this->account->getDisplayName()) ? $uname = $this->account->getDisplayName() : $uname = 'Anonymous';
+    ($this->accountInterface->getDisplayName()) ? $uname = $this->accountInterface->getDisplayName() : $uname = 'Anonymous';
     $localImagePath = '/'.$this->pathResolver->getPath('module', 'tao_iching').'/imgs';
     $sessionIdString = $this->taoCookieService->getCookieValue();
     $readingId = $this->iChingService->getReadingId($sessionIdString);

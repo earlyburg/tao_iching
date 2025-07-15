@@ -110,7 +110,7 @@ class IchingBlock extends BlockBase implements ContainerFactoryPluginInterface {
    * @return array
    */
   public function buildIchingBlock() {
-    $ichingForm = $this->formBuilder->getForm('Drupal\tao_iching\Form\tao_ichingForm');
+    $ichingForm = $this->formBuilder->getForm('\Drupal\tao_iching\Form\TaoIchingForm');
     $rendered['#iching_form'] = [$ichingForm];
     return $rendered;
   }
