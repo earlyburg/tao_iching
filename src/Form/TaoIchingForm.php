@@ -17,14 +17,13 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Drupal\Core\Url;
 use Psr\Container\NotFoundExceptionInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class TaoIchingForm extends FormBase {
 
   /**
    * @var \Drupal\Core\Extension\ExtensionPathResolver $pathResolver
    */
-  protected $pathResolver;
+  protected ExtensionPathResolver $pathResolver;
 
   /**
    * @var \Drupal\tao_iching\Service\IchingService $iChingService
@@ -55,11 +54,6 @@ class TaoIchingForm extends FormBase {
    * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
    */
   protected $configFactory;
-
-  /**
-   * @var \Symfony\Component\HttpFoundation\RedirectResponse $redirectResponse
-   */
-  protected RedirectResponse $redirectResponse;
 
   /**
    * @var \Drupal\Core\Url $url
