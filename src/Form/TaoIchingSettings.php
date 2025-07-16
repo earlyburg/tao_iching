@@ -252,7 +252,7 @@ class TaoIchingSettings extends ConfigFormBase {
       }
     }
 
-    $this->configFactory->getEditable(static::TI_SETTINGS)
+    $this->config(static::TI_SETTINGS)
       ->set('lifespan', $form_state->getValue('lifespan'))
       ->save();
     parent::submitForm($form, $form_state);
