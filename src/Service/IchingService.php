@@ -3,6 +3,7 @@
 namespace Drupal\tao_iching\Service;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -102,7 +103,6 @@ class IchingService {
     EntityTypeManagerInterface $entity_manager,
     ConfigFactoryInterface $config,
     MessengerInterface $messenger
-
     ) {
     $this->iching = ["initial" => [], "changed" => [], "question" => ""];
     $this->kun = [0, 0, 0];
@@ -742,6 +742,15 @@ class IchingService {
     $newTaoPage->set('body', ['value' => $array[1], 'format' => 'basic_html']);
     $newTaoPage->enforceIsNew();
     $newTaoPage->save();
+    // Add a URL alias for the path.
+    $newId = $newTaoPage->id();
+    $pathAlias = $this->entityTypeManager->getStorage('path_alias')->create([
+      'path' => '/node/' . $newId,
+      'alias' => '/' . $array[0],
+      'langcode' => LanguageInterface::LANGCODE_NOT_SPECIFIED,
+    ]);
+    $pathAlias->save();
+
     return true;
   }
 
