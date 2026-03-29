@@ -2,7 +2,6 @@
 
 namespace Drupal\tao_iching\Service;
 
-use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -54,19 +53,6 @@ class TaocookieService implements EventSubscriberInterface {
     RequestStack $request_stack
   ) {
     $this->requestStack = $request_stack;
-  }
-
-  /**
-   * @param \Psr\Container\ContainerInterface $container
-   *
-   * @return static
-   * @throws \Psr\Container\ContainerExceptionInterface
-   * @throws \Psr\Container\NotFoundExceptionInterface
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('request_stack'),
-    );
   }
 
   /**

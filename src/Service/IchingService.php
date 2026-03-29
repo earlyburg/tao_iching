@@ -5,11 +5,8 @@ namespace Drupal\tao_iching\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\ContainerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * The IchingService service.
@@ -117,22 +114,6 @@ class IchingService {
     $this->entityTypeManager = $entity_manager;
     $this->config = $config;
     $this->messenger = $messenger;
-  }
-
-  /**
-   * @param ContainerInterface $container
-   * @return static
-   * @throws ContainerExceptionInterface
-   * @throws NotFoundExceptionInterface
-   *
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('database'),
-      $container->get('entity_type.manager'),
-      $container->get('config.factory'),
-      $container->get('messenger')
-    );
   }
 
   /**
