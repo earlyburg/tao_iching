@@ -2,6 +2,7 @@
 
 namespace Drupal\tao_iching\Service;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -512,7 +513,7 @@ class IchingService {
         ->fields([
           'id' => $idArray['id'],
           'user_name' => $user_name,
-          'question' => $question,
+          'question' => Html::escape($question),
           'timestamp' => $idArray['timestamp'],
         ])
         ->execute();
