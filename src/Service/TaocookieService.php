@@ -8,14 +8,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * The TaoCookieService Service class.
+ */
 class TaocookieService implements EventSubscriberInterface {
 
   /**
-   * Symphony http request stack
+   * Symphony http request stack.
    *
-   * @var \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  private RequestStack $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Name of the cookie this service will manage.
@@ -46,26 +49,29 @@ class TaocookieService implements EventSubscriberInterface {
   protected bool $deleteCookie = FALSE;
 
   /**
-   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   * The Taocookie Service constructor.
    *
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The symphony http request stack.
    */
   public function __construct(
-    RequestStack $request_stack
+    RequestStack $request_stack,
   ) {
     $this->requestStack = $request_stack;
   }
 
   /**
-   * Get this cookie's name.
+   * The getCookieName function.
    *
    * @return string
+   *   Returns the name of the cookie this service manages.
    */
   public function getCookieName() {
     return $this->cookieName;
   }
 
   /**
-   * Get the cookie's value.
+   * The getCookieValue function.
    *
    * @return mixed
    *   Cookie value.
@@ -79,9 +85,10 @@ class TaocookieService implements EventSubscriberInterface {
   }
 
   /**
-   * Set the cookie's new value.
+   * The setCookieValue function.
    *
    * @param mixed $value
+   *   The new value for the cookie.
    */
   public function setCookieValue($value) {
     $this->updateCookie = TRUE;
@@ -89,25 +96,27 @@ class TaocookieService implements EventSubscriberInterface {
   }
 
   /**
-   * Whether the cookie should be updated during the response.
+   * The getUpdateCookie function.
    *
    * @return bool
+   *   Whether the cookie should be updated during the response.
    */
   public function getUpdateCookie() {
     return $this->updateCookie;
   }
 
   /**
-   * Whether the cookie should be deleted during the response.
+   * The getDeleteCookie function.
    *
    * @return bool
+   *   Whether the cookie should be deleted during the response.
    */
   public function getDeleteCookie() {
     return $this->deleteCookie;
   }
 
   /**
-   * Set weather the cookie should be deleted during the response.
+   * The setDeleteCookie function.
    *
    * @param bool $delete_cookie
    *   Whether to delete the cookie during the response.
@@ -117,8 +126,10 @@ class TaocookieService implements EventSubscriberInterface {
   }
 
   /**
-   * @return string[]
+   * The getSubscribedEvents method.
    *
+   * @return array
+   *   An array of events this service subscribes to.
    */
   public static function getSubscribedEvents() {
     return [
@@ -129,7 +140,7 @@ class TaocookieService implements EventSubscriberInterface {
   /**
    * React to the symfony kernel response event by managing visitor cookies.
    *
-   * @param ResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\ResponseEvent $event
    *   The event to process.
    */
   public function onResponse(ResponseEvent $event) {
@@ -144,4 +155,3 @@ class TaocookieService implements EventSubscriberInterface {
   }
 
 }
-

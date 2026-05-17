@@ -14,7 +14,7 @@ tao_iching.form:
 tao_iching.result:
   path: '/result/{callbackResult}'
   defaults:
-    _controller: '\Drupal\tao_iching\Controller\viewController::TaoIchingViewpage'
+    _controller: '\Drupal\tao_iching\Controller\ViewController::TaoIchingViewpage'
     _title: 'I-Ching'
   requirements:
     _permission: 'access content'

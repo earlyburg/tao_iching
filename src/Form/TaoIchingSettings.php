@@ -13,29 +13,36 @@ use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\tao_iching\Service\IchingService;
 use Psr\Container\ContainerInterface;
 
+/**
+ * The TaoIchingSettings method.
+ */
 class TaoIchingSettings extends ConfigFormBase {
 
   /**
-   * @var \Drupal\Core\Database\Connection $database
+   * The Drupal database connection.
+   *
+   * @var \Drupal\Core\Database\Connection
    */
   protected Connection $database;
 
   /**
    * Drupal config factory interface.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
-   * @var \Drupal\tao_iching\Service\IchingService $iChing
+   * The I-Ching service.
+   *
+   * @var \Drupal\tao_iching\Service\IchingService
    */
   protected IchingService $iChing;
 
   /**
    * Messenger service.
    *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $loggerFactory;
 
@@ -47,16 +54,23 @@ class TaoIchingSettings extends ConfigFormBase {
   const TI_SETTINGS = 'tao_iching.adminsettings';
 
   /**
+   * TaoIchingSettings constructor.
+   *
    * @param \Drupal\Core\Database\Connection $connection
+   *   The Drupal database connection.
    * @param \Drupal\tao_iching\Service\IchingService $iChing_service
+   *   The I-Ching service.
    * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   *   The Drupal logger factory.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The Drupal config factory.
    */
   public function __construct(
     Connection $connection,
     IchingService $iChing_service,
     LoggerChannelFactory $logger_factory,
-    ConfigFactoryInterface $config_factory) {
+    ConfigFactoryInterface $config_factory,
+  ) {
     $this->database = $connection;
     $this->iChing = $iChing_service;
     $this->loggerFactory = $logger_factory;
@@ -65,9 +79,14 @@ class TaoIchingSettings extends ConfigFormBase {
   }
 
   /**
+   * The create function.
+   *
    * @param \Psr\Container\ContainerInterface $container
+   *   The Drupal service container.
    *
    * @return \Drupal\Core\Form\ConfigFormBase|\Drupal\tao_iching\Form\TaoIchingSettings|static
+   *   An instance of this form.
+   *
    * @throws \Psr\Container\ContainerExceptionInterface
    * @throws \Psr\Container\NotFoundExceptionInterface
    */
@@ -81,12 +100,21 @@ class TaoIchingSettings extends ConfigFormBase {
   }
 
   /**
+   * The getFormId function.
+   *
    * @return string
+   *   The form ID.
    */
   public function getFormId() {
     return 'tao_iching_settings_form';
   }
 
+  /**
+   * The getEditibleConfigNames method.
+   *
+   * @return string[]
+   *   An array of config names that will be editable through this form.
+   */
   protected function getEditableConfigNames() {
     return [
       static::TI_SETTINGS,
@@ -94,17 +122,27 @@ class TaoIchingSettings extends ConfigFormBase {
   }
 
   /**
+   * The buildForm function.
+   *
    * @param array $form
+   *   The form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    *
    * @return array
+   *   The form array.
+   *
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Core\Entity\EntityStorageException
+   * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
+   * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
    * @throws \Exception
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config(static::TI_SETTINGS);
-    $idArray =  $this->database->select('tao_iching_readings', 'n')
+    $idArray = $this->database->select('tao_iching_readings', 'n')
       ->fields('n', ['id', 'user_name', 'timestamp'])
-      ->orderBy('timestamp','DESC')
+      ->orderBy('timestamp', 'DESC')
       ->execute()
       ->fetchAll();
     $readCount = count($idArray);
@@ -112,7 +150,7 @@ class TaoIchingSettings extends ConfigFormBase {
 
     $form['readings'] = [
       '#type' => 'details',
-      '#title' => $this->t($readCount . ' Readings'),
+      '#title' => $readCount . ' Readings',
       '#description' => $this->t('Delete individual readings.'),
       '#open' => FALSE,
     ];
@@ -121,7 +159,7 @@ class TaoIchingSettings extends ConfigFormBase {
       $convertedtime = date('m/d/Y h:i:s', $value->timestamp);
       $form['readings']['chkbx_' . $value->timestamp] = [
         '#type' => 'checkbox',
-        '#title' => $this->t('<a href="/result/' . $value->id . '" target="_new">' . $value->user_name . ' at ' . $convertedtime) . '</a>',
+        '#title' => '<a href="/result/' . $value->id . '" target="_new">' . $value->user_name . ' at ' . $convertedtime . '</a>',
         '#default_value' => 0,
         '#required' => FALSE,
         '#attributes' => ['class' => ['ic1-class-1']],
@@ -199,24 +237,30 @@ class TaoIchingSettings extends ConfigFormBase {
   }
 
   /**
-   * @param array $form
-   * @param FormStateInterface $form_state
+   * The validateForm function.
    *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {}
 
   /**
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * The submitForm function.
    *
-   * @return void
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
    * @throws \Exception
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $formValues = $form_state->getValues();
-    // delete individual readings
-    foreach($formValues as $key => $value) {
-      if(str_contains($key, 'chkbx_') && $value == 1) {
+    // Delete individual readings.
+    foreach ($formValues as $key => $value) {
+      if (str_contains($key, 'chkbx_') && $value == 1) {
         $cleanKey = substr($key, strlen('chkbx_'));
         $readingId = $this->iChing->getReadingIdFromTimestamp($cleanKey);
         $this->iChing->deleteReading($readingId);
@@ -245,9 +289,10 @@ class TaoIchingSettings extends ConfigFormBase {
       foreach ($this->iChing->createTaoTeChings() as $taoArray) {
         try {
           $this->iChing->createTaoPageNode($taoArray);
-        } catch (InvalidPluginDefinitionException | EntityStorageException|PluginNotFoundException $e) {
+        }
+        catch (InvalidPluginDefinitionException | EntityStorageException | PluginNotFoundException $e) {
           $this->loggerFactory->get('tao_iching')
-            ->error('Function createTaoPageNode() returned - '. $e);
+            ->error('Function createTaoPageNode() returned - ' . $e);
         }
       }
     }

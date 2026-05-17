@@ -1,6 +1,11 @@
 <?php
 
 /**
+ * @file
+ * Install file for the tao_iching module.
+ */
+
+/**
  * Implements hook_schema().
  *
  * @see hook_schema()
@@ -55,7 +60,7 @@ function tao_iching_schema() {
       ],
     ],
     'unique keys' => [
-    'book_number' => ['book_number'],
+      'book_number' => ['book_number'],
     ],
   ];
 
@@ -136,7 +141,7 @@ function tao_iching_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'TID',
-       ],
+      ],
       'id' => [
         'type' => 'varchar',
         'length' => 40,
@@ -183,10 +188,10 @@ function tao_iching_schema() {
     'description' => 'I-Ching Readings',
     'fields' => [
       'id' => [
-      'type' => 'varchar',
-      'length' => 40,
-      'not null' => TRUE,
-      'description' => 'User Session ID',
+        'type' => 'varchar',
+        'length' => 40,
+        'not null' => TRUE,
+        'description' => 'User Session ID',
       ],
       'user_name' => [
         'type' => 'varchar',
@@ -218,6 +223,7 @@ function tao_iching_schema() {
  * Implements hook_install().
  *
  * @throws \Exception
+ *
  * @see hook_install()
  *
  * @ingroup tao_iching
@@ -225,8 +231,8 @@ function tao_iching_schema() {
 function tao_iching_install() {
 
   $connection = \Drupal::database();
-  // hexagrams table
-  foreach (createHexagramsArray() as $valueArray) {
+  // Hexagrams table.
+  foreach (create_hexagrams_array() as $valueArray) {
     $entry = [
       'book_number' => $valueArray[0],
       'line1' => $valueArray[1],
@@ -238,8 +244,8 @@ function tao_iching_install() {
     ];
     $connection->insert('tao_iching_hexagrams')->fields($entry)->execute();
   }
-  // books table
-  foreach (createBooksArray() as $bookValueArray) {
+  // Books table.
+  foreach (create_books_array() as $bookValueArray) {
     $bookEntry = [
       'number' => $bookValueArray['number'],
       'descr' => $bookValueArray['descr'],
@@ -258,9 +264,12 @@ function tao_iching_install() {
 }
 
 /**
+ * Creates an array of hexagrams.
+ *
  * @return array[]
+ *   An array of hexagrams.
  */
-function createHexagramsArray() {
+function create_hexagrams_array() {
   return [
     0 => ['01', 'yang', 'yang', 'yang', 'yang', 'yang', 'yang'],
     1 => ['02', 'yin', 'yin', 'yin', 'yin', 'yin', 'yin'],
@@ -330,9 +339,12 @@ function createHexagramsArray() {
 }
 
 /**
+ * Creates an array of books.
+ *
  * @return array[]
+ *   An array of books.
  */
-function createBooksArray() {
+function create_books_array() {
   return [
     0 => [
       'number' => '01',
@@ -1105,6 +1117,3 @@ function createBooksArray() {
   ];
 
 }
-
-
-

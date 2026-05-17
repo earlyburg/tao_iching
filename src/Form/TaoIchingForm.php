@@ -13,61 +13,90 @@ use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\tao_iching\Service\IchingService;
 use Drupal\tao_iching\Service\TaocookieService;
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Drupal\Core\Url;
-use Psr\Container\NotFoundExceptionInterface;
 
+/**
+ * The TaoIchingForm class.
+ */
 class TaoIchingForm extends FormBase {
 
   /**
-   * @var \Drupal\Core\Extension\ExtensionPathResolver $pathResolver
+   * The ExtensionPathResolver service.
+   *
+   * @var \Drupal\Core\Extension\ExtensionPathResolver
    */
   protected ExtensionPathResolver $pathResolver;
 
   /**
-   * @var \Drupal\tao_iching\Service\IchingService $iChingService
+   * The I Ching service.
+   *
+   * @var \Drupal\tao_iching\Service\IchingService
    */
   protected IchingService $iChingService;
 
   /**
-   * @var \Drupal\Core\Messenger\MessengerInterface $messenger
+   * The messenger interface service.
+   *
+   * @var \Drupal\Core\Messenger\MessengerInterface
    */
   protected $messenger;
 
   /**
-   * @var \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
+   * The logger channel factory service.
+   *
+   * @var \Drupal\Core\Logger\LoggerChannelFactory
    */
   protected $loggerFactory;
 
   /**
-   * @var \Drupal\tao_iching\Service\TaocookieService $taoCookieService
+   * The TaoCookie service.
+   *
+   * @var \Drupal\tao_iching\Service\TaocookieService
    */
   protected TaocookieService $taoCookieService;
 
   /**
-   * @var \Drupal\Core\Session\AccountInterface $accountInterface
+   * The account interface service.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
    */
   protected AccountInterface $accountInterface;
 
   /**
-   * @var \Drupal\Core\Config\ConfigFactoryInterface $configFactory
+   * The config factory service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
 
   /**
-   * @var \Drupal\Core\Url $url
+   * The URL service.
+   *
+   * @var \Drupal\Core\Url
    */
   protected Url $url;
 
   /**
-   * @param ExtensionPathResolver $path_resolver
-   * @param IchingService $iChing_service
-   * @param MessengerInterface $messenger_interface
-   * @param LoggerChannelFactory $logger_factory
-   * @param TaocookieService $taoCookie_service
-   * @param AccountInterface $account_interface
-   * @param ConfigFactoryInterface $config_factory
+   * The TaoIchingForm service class constructor.
+   *
+   * @param \Drupal\Core\Extension\ExtensionPathResolver $path_resolver
+   *   The extension path resolver service.
+   * @param \Drupal\tao_iching\Service\IchingService $iChing_service
+   *   The I Ching service.
+   * @param \Drupal\Core\Messenger\MessengerInterface $messenger_interface
+   *   The messenger interface service.
+   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
+   *   The logger channel factory service.
+   * @param \Drupal\tao_iching\Service\TaocookieService $taoCookie_service
+   *   The TaoCookie service.
+   * @param \Drupal\Core\Session\AccountInterface $account_interface
+   *   The account interface service.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
+   *
+   * @throws \Psr\Container\ContainerExceptionInterface
+   * @throws \Psr\Container\NotFoundExceptionInterface
    */
   public function __construct(
     ExtensionPathResolver $path_resolver,
@@ -76,7 +105,8 @@ class TaoIchingForm extends FormBase {
     LoggerChannelFactory $logger_factory,
     TaocookieService $taoCookie_service,
     AccountInterface $account_interface,
-    ConfigFactoryInterface $config_factory) {
+    ConfigFactoryInterface $config_factory,
+  ) {
     $this->pathResolver = $path_resolver;
     $this->iChingService = $iChing_service;
     $this->messenger = $messenger_interface;
@@ -87,12 +117,13 @@ class TaoIchingForm extends FormBase {
   }
 
   /**
-   * @param ContainerInterface $container
-   *   The Drupal service container.
+   * The TaoIchingForm create method.
+   *
+   * @param \Psr\Container\ContainerInterface $container
+   *   The container interface.
    *
    * @return static
-   * @throws ContainerExceptionInterface
-   * @throws NotFoundExceptionInterface
+   *   An instance of the TaoIchingForm class.
    */
   public static function create(ContainerInterface $container) {
     return new static(
@@ -107,24 +138,32 @@ class TaoIchingForm extends FormBase {
   }
 
   /**
-   * @return string
+   * The getFormId method.
    *
+   * @return string
+   *   The form ID.
    */
   public function getFormId() {
     return 'tao_iching_form';
   }
 
   /**
+   * The buildForm method.
+   *
    * @param array $form
+   *   The form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    *
    * @return array
+   *   The form array.
+   *
    * @throws \Exception
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $localImagePath = '/'.$this->pathResolver->getPath('module', 'tao_iching').'/imgs';
-    if(!$this->taoCookieService->getCookieValue()) {
-      $idString = $this->iChingService->getSessionId($this->iChingService->makeID());
+    $localImagePath = '/' . $this->pathResolver->getPath('module', 'tao_iching') . '/imgs';
+    if (!$this->taoCookieService->getCookieValue()) {
+      $idString = $this->iChingService->getSessionId($this->iChingService->makeId());
       $this->taoCookieService->setCookieValue($idString);
     }
     $form = [];
@@ -137,9 +176,9 @@ class TaoIchingForm extends FormBase {
     ];
 
     $coinMarkup = "<div id='coin'>";
-    $coinMarkup .= '<img src="'.$localImagePath.'/heads.png">';
-    $coinMarkup .= '<img src="'.$localImagePath.'/heads.png">';
-    $coinMarkup .= '<img src="'.$localImagePath.'/heads.png">';
+    $coinMarkup .= '<img src="' . $localImagePath . '/heads.png">';
+    $coinMarkup .= '<img src="' . $localImagePath . '/heads.png">';
+    $coinMarkup .= '<img src="' . $localImagePath . '/heads.png">';
     $coinMarkup .= "</div>";
     $coinMarkup .= "<div id='iching_form_blurb'></div><div class='sm_line'></div>";
 
@@ -152,13 +191,13 @@ class TaoIchingForm extends FormBase {
     $form['submit_button'] = [
       '#type' => 'submit',
       '#ajax' => [
-        'callback' => '::tao_iching_submit_callback',
+        'callback' => '::taoIchingSubmitCallback',
         'wrapper' => 'iching_box',
       ],
       '#value' => $this->t('Toss The Coins'),
       '#attributes' => [
         'class' => [
-          'i-ching-submit'
+          'i-ching-submit',
         ],
       ],
     ];
@@ -166,31 +205,39 @@ class TaoIchingForm extends FormBase {
   }
 
   /**
-   * @param array $form
-   * @param FormStateInterface $form_state
-   * @return void
+   * The iChingFormValidate method.
    *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    */
   public function iChingFormValidate(array &$form, FormStateInterface $form_state) {}
 
   /**
-   * @param array $form
-   * @param FormStateInterface $form_state
-   * @return void
+   * The submitForm method.
    *
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {}
 
   /**
-   * @param array $form
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * The taoIchingSubmitCallback function.
    *
-   * @return \Drupal\Core\Ajax\AjaxResponse|mixed
-   * @throws \Exception
+   * @param array $form
+   *   The form array.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state object.
+   *
+   * @return \Drupal\Core\Ajax\AjaxResponse|void
+   *   An AjaxResponse object for redirecting to the results page, or void.
    */
-  public function tao_iching_submit_callback(array $form, FormStateInterface $form_state) {
+  public function taoIchingSubmitCallback(array $form, FormStateInterface $form_state) {
     ($this->accountInterface->getDisplayName()) ? $uname = $this->accountInterface->getDisplayName() : $uname = 'Anonymous';
-    $localImagePath = '/'.$this->pathResolver->getPath('module', 'tao_iching').'/imgs';
+    $localImagePath = '/' . $this->pathResolver->getPath('module', 'tao_iching') . '/imgs';
     $sessionIdString = $this->taoCookieService->getCookieValue();
     $readingId = $this->iChingService->getReadingId($sessionIdString);
     /* generate hexagram line */
@@ -205,7 +252,7 @@ class TaoIchingForm extends FormBase {
     $line = $user_click['line'];
     $coinsval = $user_click['coinsval'];
     /* start a reading database session */
-    if($this->iChingService->readingExist($readingId)) {
+    if ($this->iChingService->readingExist($readingId)) {
       $throw_num = $this->iChingService->checkNumber($readingId) + 1;
       $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
       $form_state->setRebuild();
@@ -218,7 +265,7 @@ class TaoIchingForm extends FormBase {
       $form_state->setRebuild();
     }
     /* 6 clicks method logic */
-    if($this->iChingService->checkNumber($readingId) == 6) {
+    if ($this->iChingService->checkNumber($readingId) == 6) {
       $response = new AjaxResponse();
       $url = Url::fromRoute('tao_iching.result', ['callbackResult' => $readingId]);
       $command = new RedirectCommand($url->toString());
@@ -227,44 +274,49 @@ class TaoIchingForm extends FormBase {
       return $response;
     }
     /* safeguard against broken sessions */
-    if ( $this->iChingService->checkNumber($readingId) >= 7 ) {
+    if ($this->iChingService->checkNumber($readingId) >= 7) {
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
       $this->messenger()->addWarning('Apologies, there was a problem with the website. Please try again.');
     }
-    // create our output
+    // Create our output.
     $markup = "<div id='coin'>";
-    // TODO figure out if we need the zero case
+    // @todo Figure out if we need the zero case.
     switch ($coinsval) {
       case 9:
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
         break;
+
       case 8:
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
         break;
+
       case 7:
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
         break;
-      case 6;
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
-        $markup .= '<img src="'.$localImagePath.'/tails.png">';
+
+      case 6:
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img src="' . $localImagePath . '/tails.png">';
         break;
-      case 0;
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
+
+      case 0:
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
         break;
+
       default:
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
-        $markup .= '<img src="'.$localImagePath.'/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img src="' . $localImagePath . '/heads.png">';
     }
     $markup .= "</div>"; /* #coin */
     /* fix our output to be readable */
@@ -273,12 +325,15 @@ class TaoIchingForm extends FormBase {
       case "yang_changing":
         $legible = str_replace("yang_changing", "Yang, changing.", $raw);
         break;
+
       case "yin":
         $legible = str_replace("yin", "Yin.", $raw);
         break;
+
       case "yin_changing":
         $legible = str_replace("yin_changing", "Yin, changing.", $raw);
         break;
+
       case "yang":
         $legible = str_replace("yang", "Yang.", $raw);
         break;
@@ -287,7 +342,7 @@ class TaoIchingForm extends FormBase {
     $markup .= "Coin toss " . $throw_num . " yields " . $legible;
     $markup .= "</div>"; /* #iching_form_blurb */
     $markup .= "<div class='sm_line'>";
-    $markup .= '<img src="'.$localImagePath.'/'.$line.'_sm.png">';
+    $markup .= '<img src="' . $localImagePath . '/' . $line . '_sm.png">';
     $markup .= "</div>"; /* .sm_line */
     /* markup form element */
     $element = $form['iching_box'];
