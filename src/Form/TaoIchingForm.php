@@ -271,12 +271,14 @@ class TaoIchingForm extends FormBase {
       $command = new RedirectCommand($url->toString());
       $response->addCommand($command);
       $this->taoCookieService->setDeleteCookie();
+      $form_state->setRebuild();
       return $response;
     }
     /* safeguard against broken sessions */
     if ($this->iChingService->checkNumber($readingId) >= 7) {
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
+      $form_state->setRebuild();
       $this->messenger()->addWarning('Apologies, there was a problem with the website. Please try again.');
     }
     // Create our output.
