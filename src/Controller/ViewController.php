@@ -3,12 +3,9 @@
 namespace Drupal\tao_iching\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Extension\ExtensionPathResolver;
-use Drupal\Core\Logger\LoggerChannelFactory;
 use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
 use Drupal\tao_iching\Service\IchingService;
-use Drupal\tao_iching\Service\TaocookieService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -25,32 +22,11 @@ class ViewController extends ControllerBase {
   protected IchingService $iChing;
 
   /**
-   * The database connection.
-   *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected Connection $database;
-
-  /**
    * The local path resolver.
    *
    * @var \Drupal\Core\Extension\ExtensionPathResolver
    */
   protected ExtensionPathResolver $localPath;
-
-  /**
-   * The logger factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected LoggerChannelFactory $logger;
-
-  /**
-   * The Tao Cookie service.
-   *
-   * @var \Drupal\tao_iching\Service\TaocookieService
-   */
-  protected TaocookieService $taoCookie;
 
   /**
    * The kill switch.
@@ -73,12 +49,6 @@ class ViewController extends ControllerBase {
    *   The local path resolver.
    * @param \Drupal\tao_iching\Service\IchingService $iChingService
    *   The I-Ching service.
-   * @param \Drupal\Core\Database\Connection $connection
-   *   The database connection.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $loggerFactory
-   *   The logger factory.
-   * @param \Drupal\tao_iching\Service\TaocookieService $taoCookieService
-   *   The Tao Cookie service.
    * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $killSwitch
    *   The kill switch.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
@@ -91,17 +61,11 @@ class ViewController extends ControllerBase {
   public function __construct(
     ExtensionPathResolver $pathResolver,
     IchingService $iChingService,
-    Connection $connection,
-    LoggerChannelFactory $loggerFactory,
-    TaocookieService $taoCookieService,
     KillSwitch $killSwitch,
     RequestStack $requestStack,
   ) {
     $this->localPath = $pathResolver;
     $this->iChing = $iChingService;
-    $this->database = $connection;
-    $this->logger = $loggerFactory;
-    $this->taoCookie = $taoCookieService;
     $this->killSwitch = $killSwitch;
     $this->requestStack = $requestStack;
   }
@@ -123,9 +87,6 @@ class ViewController extends ControllerBase {
     return new static(
       $container->get('extension.path.resolver'),
       $container->get('tao_iching.service'),
-      $container->get('database'),
-      $container->get('logger.factory'),
-      $container->get('taocookie.service'),
       $container->get('page_cache_kill_switch'),
       $container->get('request_stack'),
     );
