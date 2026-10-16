@@ -4,12 +4,9 @@ namespace Drupal\tao_iching\Form;
 
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Logger\LoggerChannelFactory;
-use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\tao_iching\Service\IchingService;
 use Drupal\tao_iching\Service\TaocookieService;
@@ -36,20 +33,6 @@ class TaoIchingForm extends FormBase {
   protected IchingService $iChingService;
 
   /**
-   * The messenger interface service.
-   *
-   * @var \Drupal\Core\Messenger\MessengerInterface
-   */
-  protected $messenger;
-
-  /**
-   * The logger channel factory service.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactory
-   */
-  protected $loggerFactory;
-
-  /**
    * The TaoCookie service.
    *
    * @var \Drupal\tao_iching\Service\TaocookieService
@@ -64,36 +47,16 @@ class TaoIchingForm extends FormBase {
   protected AccountInterface $accountInterface;
 
   /**
-   * The config factory service.
-   *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
-   */
-  protected $configFactory;
-
-  /**
-   * The URL service.
-   *
-   * @var \Drupal\Core\Url
-   */
-  protected Url $url;
-
-  /**
    * The TaoIchingForm service class constructor.
    *
    * @param \Drupal\Core\Extension\ExtensionPathResolver $path_resolver
    *   The extension path resolver service.
    * @param \Drupal\tao_iching\Service\IchingService $iChing_service
    *   The I Ching service.
-   * @param \Drupal\Core\Messenger\MessengerInterface $messenger_interface
-   *   The messenger interface service.
-   * @param \Drupal\Core\Logger\LoggerChannelFactory $logger_factory
-   *   The logger channel factory service.
    * @param \Drupal\tao_iching\Service\TaocookieService $taoCookie_service
    *   The TaoCookie service.
    * @param \Drupal\Core\Session\AccountInterface $account_interface
    *   The account interface service.
-   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
-   *   The config factory service.
    *
    * @throws \Psr\Container\ContainerExceptionInterface
    * @throws \Psr\Container\NotFoundExceptionInterface
@@ -101,19 +64,13 @@ class TaoIchingForm extends FormBase {
   public function __construct(
     ExtensionPathResolver $path_resolver,
     IchingService $iChing_service,
-    MessengerInterface $messenger_interface,
-    LoggerChannelFactory $logger_factory,
     TaocookieService $taoCookie_service,
     AccountInterface $account_interface,
-    ConfigFactoryInterface $config_factory,
   ) {
     $this->pathResolver = $path_resolver;
     $this->iChingService = $iChing_service;
-    $this->messenger = $messenger_interface;
-    $this->loggerFactory = $logger_factory;
     $this->taoCookieService = $taoCookie_service;
     $this->accountInterface = $account_interface;
-    $this->configFactory = $config_factory;
   }
 
   /**
@@ -129,11 +86,8 @@ class TaoIchingForm extends FormBase {
     return new static(
       $container->get('extension.path.resolver'),
       $container->get('tao_iching.service'),
-      $container->get('messenger'),
-      $container->get('logger.factory'),
       $container->get('taocookie.service'),
       $container->get('current_user'),
-      $container->get('config.factory'),
     );
   }
 
