@@ -279,7 +279,7 @@ class TaoIchingForm extends FormBase {
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
-      return $form;
+      return $form_state;
     }
     // Create our output.
     $markup = "<div id='coin'>";
