@@ -140,10 +140,6 @@ class ViewController extends ControllerBase {
   public function sixClicksMethod($callbackResult) {
     /* figure out the return path if the transaction breaks */
     $previousPageUrl = $this->requestStack->getCurrentRequest()->headers->get('referer');
-    $drupalBaseUrl = $_SERVER['REQUEST_SCHEME'] . '://' . $this->requestStack->getCurrentRequest()->getHttpHost();
-    $returnPathUri = str_replace($drupalBaseUrl, '', $previousPageUrl);
-    $currentPageUri = $this->requestStack->getCurrentRequest()->getRequestUri();
-    ($returnPathUri != $currentPageUri) ? $previousPageUri = $returnPathUri : $previousPageUri = $drupalBaseUrl;
     /* clear the page cache for fresh Ajax POST vars */
     $this->killSwitch->trigger();
     $localImagePath = $this->localPath->getPath('module', 'tao_iching') . '/imgs';
@@ -183,7 +179,7 @@ class ViewController extends ControllerBase {
     }
     $content .= '</div>';
     $content .= '<div class="iching-blurb">';
-    $content .= '<a href="' . $previousPageUri . '"><b>Click Here to start again.</b></a>';
+    $content .= '<a href="' . $previousPageUrl . '"><b>Click Here to start again.</b></a>';
     $content .= '</div>';
     $content .= '</div>';
     // END .iching-content.

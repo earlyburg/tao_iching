@@ -205,35 +205,37 @@ class TaoIchingForm extends FormBase {
     }
     $line = $user_click['line'];
     $coinsval = $user_click['coinsval'];
-    /* start a reading database session */
-    if ($this->iChingService->readingExist($readingId)) {
-      $throw_num = $this->iChingService->checkNumber($readingId) + 1;
-      $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
-      $form_state->setRebuild();
-    }
-    else {
-      $throw_num = 1;
-      $id = $this->iChingService->recreateIdArray($sessionIdString);
-      $this->iChingService->readingInit($id, $uname, $form_state->getValue('question'));
-      $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
-      $form_state->setRebuild();
+    if ($this->iChingService->checkNumber($readingId) < 6) {
+      /* start a reading database session */
+      if ($this->iChingService->readingExist($readingId)) {
+        $throw_num = $this->iChingService->checkNumber($readingId) + 1;
+        $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
+        $form_state->setRebuild();
+      }
+      else {
+        $throw_num = 1;
+        $id = $this->iChingService->recreateIdArray($sessionIdString);
+        $this->iChingService->readingInit($id, $uname, $form_state->getValue('question'));
+        $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
+        $form_state->setRebuild();
+      }
     }
     /* 6 clicks method logic */
-    if ($this->iChingService->checkNumber($readingId) == 6) {
+    elseif ($this->iChingService->checkNumber($readingId) == 6) {
       $response = new AjaxResponse();
       $url = Url::fromRoute('tao_iching.result', ['callbackResult' => $readingId]);
       $command = new RedirectCommand($url->toString());
       $response->addCommand($command);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
+      /** @todo test if we are coming from the results page before redirecting */
       return $response;
     }
     /* safeguard against broken sessions */
-    if ($this->iChingService->checkNumber($readingId) >= 7) {
+    else {
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
-      return $form_state;
     }
     // Create our output.
     $markup = "<div id='coin'>";

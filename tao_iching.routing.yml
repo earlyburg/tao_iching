@@ -11,6 +11,8 @@ tao_iching.form:
     _form: '\Drupal\tao_iching\Form\TaoIchingForm'
   requirements:
     _permission: 'access content'
+  options:
+    no_cache: TRUE  
 tao_iching.result:
   path: '/result/{callbackResult}'
   defaults:
@@ -18,4 +20,5 @@ tao_iching.result:
     _title: 'I-Ching'
   requirements:
     _permission: 'access content'
-
+  options:
+    no_cache: TRUE
