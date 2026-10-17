@@ -29,12 +29,6 @@ function tao_iching_theme($existing, $type, $theme, $path) {
       'render element' => 'children',
       'template' => 'form--tao-iching-form',
     ],
-    'block__i_ching_block' => [
-      'variables' => [
-        'iching' => NULL,
-      ],
-      'template' => 'block--i-ching-block',
-    ],
   ];
   return $variables;
 }

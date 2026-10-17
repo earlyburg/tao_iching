@@ -583,8 +583,8 @@ class IchingService {
    * @param string $id
    *   A string containing the reading ID to check the number of lines for.
    *
-   * @return int|false
-   *   Returns the number of lines for the given reading ID, or false.
+   * @return int
+   *   Returns the number of lines for the given reading ID, or 0.
    */
   public function checkNumber($id) {
     $count = $this->database->select('tao_iching_lines', 'n')
@@ -593,7 +593,7 @@ class IchingService {
       ->countQuery()
       ->execute()
       ->fetchField();
-    ($count) ? $return = $count : $return = FALSE;
+    ($count) ? $return = $count : $return = 0;
     return $return;
   }
 

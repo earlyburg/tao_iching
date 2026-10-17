@@ -194,9 +194,9 @@ class TaoIchingForm extends FormBase {
     $localImagePath = '/' . $this->pathResolver->getPath('module', 'tao_iching') . '/imgs';
     $sessionIdString = $this->taoCookieService->getCookieValue();
     $readingId = $this->iChingService->getReadingId($sessionIdString);
-    /* generate hexagram line */
+    // Generate hexagram line.
     $user_click = $this->iChingService->line();
-    /* get & set the values from the toss */
+    // Get & set the values from the toss.
     foreach ($user_click as $key => $value) {
       if ($key != "line" && $key != "coinsval") {
         $tri_name = $key;
@@ -205,9 +205,9 @@ class TaoIchingForm extends FormBase {
     }
     $line = $user_click['line'];
     $coinsval = $user_click['coinsval'];
-    /* 6 clicks method logic */
+    // 6 clicks method logic.
     if ($this->iChingService->checkNumber($readingId) < 6) {
-      /* start a reading database session */
+
       if ($this->iChingService->readingExist($readingId)) {
         $throw_num = $this->iChingService->checkNumber($readingId) + 1;
         $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
@@ -220,6 +220,7 @@ class TaoIchingForm extends FormBase {
         $this->iChingService->insertLine($readingId, $throw_num, $line, $tri_name, $code, $coinsval);
         $form_state->setRebuild();
       }
+
     }
     elseif ($this->iChingService->checkNumber($readingId) == 6) {
       $response = new AjaxResponse();
@@ -228,11 +229,10 @@ class TaoIchingForm extends FormBase {
       $response->addCommand($command);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
-      /** @todo test if we are coming from the results page before redirecting */
       return $response;
     }
     else {
-      /* safeguard against broken sessions */
+      // Safeguard against broken sessions.
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
@@ -275,7 +275,7 @@ class TaoIchingForm extends FormBase {
         $markup .= '<img src="' . $localImagePath . '/heads.png">';
     }
     $markup .= "</div>"; /* #coin */
-    /* fix our output to be readable */
+    // Fix output to be readable.
     $raw = $line;
     switch ($raw) {
       case "yang_changing":
@@ -300,7 +300,7 @@ class TaoIchingForm extends FormBase {
     $markup .= "<div class='sm_line'>";
     $markup .= '<img src="' . $localImagePath . '/' . $line . '_sm.png">';
     $markup .= "</div>"; /* .sm_line */
-    /* markup form element */
+    // Markup form element.
     $element = $form['iching_box'];
     $element['#markup'] = $markup;
 

@@ -6,7 +6,7 @@ tao_iching.admin_settings_form:
   requirements:
     _permission: 'access administration pages'
 tao_iching.form:
-  path: '/iching_form'
+  path: '/iching'
   defaults:
     _form: '\Drupal\tao_iching\Form\TaoIchingForm'
     _title: 'I-Ching'
