@@ -6,6 +6,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Extension\ExtensionPathResolver;
 use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
 use Drupal\tao_iching\Service\IchingService;
+use Drupal\tao_iching\Service\TaocookieService;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -43,31 +44,42 @@ class ViewController extends ControllerBase {
   private RequestStack $requestStack;
 
   /**
+   * The TaoCookie service.
+   *
+   * @var \Drupal\tao_iching\Service\TaocookieService
+   */
+  protected TaocookieService $taoCookieService;
+
+  /**
    * The ViewController constructor.
    *
-   * @param \Drupal\Core\Extension\ExtensionPathResolver $pathResolver
+   * @param \Drupal\Core\Extension\ExtensionPathResolver $path_resolver
    *   The local path resolver.
-   * @param \Drupal\tao_iching\Service\IchingService $iChingService
+   * @param \Drupal\tao_iching\Service\IchingService $iChing_service
    *   The I-Ching service.
-   * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $killSwitch
+   * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $kill_switch
    *   The kill switch.
-   * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
    *   The symphony http request stack.
+   * @param \Drupal\tao_iching\Service\TaocookieService $taoCookie_service
+   *   The TaoCookie service.
    *
    * @throws \Psr\Container\ContainerExceptionInterface
    * @throws \Psr\Container\NotFoundExceptionInterface
    * @throws \Exception
    */
   public function __construct(
-    ExtensionPathResolver $pathResolver,
-    IchingService $iChingService,
-    KillSwitch $killSwitch,
-    RequestStack $requestStack,
+    ExtensionPathResolver $path_resolver,
+    IchingService $iChing_service,
+    KillSwitch $kill_switch,
+    RequestStack $request_stack,
+    TaocookieService $taoCookie_service,
   ) {
-    $this->localPath = $pathResolver;
-    $this->iChing = $iChingService;
-    $this->killSwitch = $killSwitch;
-    $this->requestStack = $requestStack;
+    $this->localPath = $path_resolver;
+    $this->iChing = $iChing_service;
+    $this->killSwitch = $kill_switch;
+    $this->requestStack = $request_stack;
+    $this->taoCookieService = $taoCookie_service;
   }
 
   /**
@@ -89,6 +101,7 @@ class ViewController extends ControllerBase {
       $container->get('tao_iching.service'),
       $container->get('page_cache_kill_switch'),
       $container->get('request_stack'),
+      $container->get('taocookie.service'),
     );
   }
 
@@ -140,8 +153,10 @@ class ViewController extends ControllerBase {
   public function sixClicksMethod($callbackResult) {
     /* figure out the return path if the transaction breaks */
     $previousPageUrl = $this->requestStack->getCurrentRequest()->headers->get('referer');
-    /* clear the page cache for fresh Ajax POST vars */
+    /* Clear the page cache for fresh Ajax POST vars */
     $this->killSwitch->trigger();
+    /* Delete the I-Ching cookie to ensure a fresh session */
+    $this->taoCookieService->setDeleteCookie();
     $localImagePath = $this->localPath->getPath('module', 'tao_iching') . '/imgs';
     /* retrieve the first hexagram */
     $localChing = $this->iChing->myIching($callbackResult);
@@ -301,6 +316,7 @@ class ViewController extends ControllerBase {
    */
   public function instantReading() {
     $this->killSwitch->trigger();
+    $this->taoCookieService->setDeleteCookie();
     $localImagePath = $this->localPath->getPath('module', 'tao_iching') . '/imgs';
     $finalChing = $this->iChing->complete($this->iChing->hexagram());
     $finalchg = $finalChing['changed'];

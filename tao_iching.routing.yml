@@ -11,6 +11,7 @@ tao_iching.form:
     _form: '\Drupal\tao_iching\Form\TaoIchingForm'
   requirements:
     _permission: 'access content'
+    _access: 'TRUE'
   options:
     no_cache: TRUE  
 tao_iching.result:
@@ -20,5 +21,6 @@ tao_iching.result:
     _title: 'I-Ching'
   requirements:
     _permission: 'access content'
+    _access: 'TRUE'
   options:
     no_cache: TRUE

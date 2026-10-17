@@ -205,6 +205,7 @@ class TaoIchingForm extends FormBase {
     }
     $line = $user_click['line'];
     $coinsval = $user_click['coinsval'];
+    /* 6 clicks method logic */
     if ($this->iChingService->checkNumber($readingId) < 6) {
       /* start a reading database session */
       if ($this->iChingService->readingExist($readingId)) {
@@ -220,7 +221,6 @@ class TaoIchingForm extends FormBase {
         $form_state->setRebuild();
       }
     }
-    /* 6 clicks method logic */
     elseif ($this->iChingService->checkNumber($readingId) == 6) {
       $response = new AjaxResponse();
       $url = Url::fromRoute('tao_iching.result', ['callbackResult' => $readingId]);
@@ -231,15 +231,13 @@ class TaoIchingForm extends FormBase {
       /** @todo test if we are coming from the results page before redirecting */
       return $response;
     }
-    /* safeguard against broken sessions */
     else {
+      /* safeguard against broken sessions */
       $this->iChingService->deleteReading($readingId);
       $this->taoCookieService->setDeleteCookie();
       $form_state->setRebuild();
     }
-    // Create our output.
     $markup = "<div id='coin'>";
-    // @todo Figure out if we need the zero case.
     switch ($coinsval) {
       case 9:
         $markup .= '<img src="' . $localImagePath . '/heads.png">';
