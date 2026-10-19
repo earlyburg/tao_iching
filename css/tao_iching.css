@@ -1,5 +1,5 @@
 .animate-coin {
-  animation: flip 1.4s 1;
+  animation: flip 0.8s 0.5;
 }
 
 @keyframes flip {
@@ -8,7 +8,7 @@
   }
 
   100% {
-    transform: scale3d(1,1,1) rotateX(2880deg);
+    transform: scale3d(1,1,1) rotateX(1440deg);
   }
 }
 
@@ -115,4 +115,12 @@
   margin: 0.2em 0 0.3em;
   font-size: 1.05em;
   font-weight: bold;
+}
+
+#iching_box {
+  height:110px;
+}
+
+#throw_num {
+  display: none;
 }

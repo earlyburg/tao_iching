@@ -3,18 +3,28 @@
  * javascript for the tao_iching module.
  *
  */
-(function ($, Drupal) {
+(function (Drupal, once) {
+   'use strict';
   Drupal.behaviors.tao_iching = {
     attach: function (context, settings) {
-      const ichingForm = document.getElementById('tao-iching-form');
-      if(ichingForm) {
-        Drupal.Ajax.prototype.beforeSubmit = function (form_values, element, options) {
-          const coin = document.getElementById('coin');
-          coin.innerHTML = '<img class="heads animate-coin" src="/modules/custom/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/modules/custom/tao_iching/imgs/heads.png"/><img class="heads animate-coin" src="/modules/custom/tao_iching/imgs/heads.png"/>';
-        }
-      }
+      const ichingForm = once('tao-iching-form', 'form[data-drupal-selector="tao-iching-form"]', context);
+      ichingForm.forEach((form) => {
+        // Change the text of the submit button when we have clicked 6 times.
+        var submitButton = form.querySelector('#edit-submit-button');
+        once.remove('sync-reload-values', '#throw_num', document);
+
+        submitButton.addEventListener('click', function () {          
+          if (form.querySelector('#throw_num').innerHTML.trim() !== '') {
+            if (form.querySelector('#throw_num').textContent === '6') {
+              submitButton.setAttribute('value', "Get The Result");
+            }
+          }
+        });
+
+      });
     }
   };
+
   Drupal.behaviors.tao_iching_tabs = {
     attach: function (context, settings)  {
       const tablinks = context.getElementsByClassName('tablinks');
@@ -49,4 +59,4 @@
       }
     }
   };
-}(jQuery, Drupal));
+}(Drupal, once));

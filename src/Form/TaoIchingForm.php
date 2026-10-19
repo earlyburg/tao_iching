@@ -134,7 +134,7 @@ class TaoIchingForm extends FormBase {
     $coinMarkup .= '<img src="' . $localImagePath . '/heads.png">';
     $coinMarkup .= '<img src="' . $localImagePath . '/heads.png">';
     $coinMarkup .= "</div>";
-    $coinMarkup .= "<div id='iching_form_blurb'></div><div class='sm_line'></div>";
+    $coinMarkup .= "<div id='iching_form_blurb'></div><div class='sm_line'></div><div id='throw_num'></div>";
 
     $form['iching_box'] = [
       '#prefix' => '<div id="iching_box">',
@@ -240,39 +240,39 @@ class TaoIchingForm extends FormBase {
     $markup = "<div id='coin'>";
     switch ($coinsval) {
       case 9:
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
         break;
 
       case 8:
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
         break;
 
       case 7:
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
         break;
 
       case 6:
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
-        $markup .= '<img src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/tails.png">';
         break;
 
       case 0:
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
         break;
 
       default:
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
-        $markup .= '<img src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
+        $markup .= '<img class="animate-coin" src="' . $localImagePath . '/heads.png">';
     }
     $markup .= "</div>"; /* #coin */
     // Fix output to be readable.
@@ -300,6 +300,7 @@ class TaoIchingForm extends FormBase {
     $markup .= "<div class='sm_line'>";
     $markup .= '<img src="' . $localImagePath . '/' . $line . '_sm.png">';
     $markup .= "</div>"; /* .sm_line */
+    $markup .= "<div id='throw_num'>" . $throw_num . "</div>";
     // Markup form element.
     $element = $form['iching_box'];
     $element['#markup'] = $markup;
